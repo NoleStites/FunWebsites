@@ -1,0 +1,33 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#startBtn {
+    font-size: 20pt;
+    padding: 10px 20px;
+}
+
+#gameBox {
+    width: 600px;
+    height: 800px;
+    background-color: white;
+}
+
+#gameCanvas {
+    background-color: lightgrey;
+}
