@@ -1,3 +1,11 @@
+// TODO:
+// - [DONE] Spawn apples
+// - Eat and respawn apples (no snake growth yet)
+// - Snake growth from apples
+// - Snake collision with self
+
+// - BUG: when eating apple, tail is not tail
+
 let gameBox = document.getElementById("gameBox");
 let gameCanvas = document.getElementById("gameCanvas");
 gameCanvas.width = gameBox.offsetWidth;
@@ -19,8 +27,51 @@ var snakeHeading = "down";
 var prevSnakeHeading = snakeHeading;
 var snakeSegments = [[snakeHeadX,snakeHeadY-1,2], [snakeHeadX,snakeHeadY-2,7]]; // Order: neck -> tail. Format: [x,y,segment_type 1-14]. 
 
+var appleX = 0;
+var appleY = 0;
+
 _clearGrid();
 _drawGrid();
+spawnApple();
+
+// Spawns a new apple randomly on the board (excludes snake tiles)
+// Returns 0 if apple spawned
+// Returns 1 if no space for apple to spawn (player won)
+function spawnApple()
+{
+    // Create list of all coordinates
+    let valid_tiles = [];
+    for (let i = 0; i < gameWidth; i++)
+    {
+        for (let j = 0; j < gameHeight; j++)
+        {
+            valid_tiles.push(`${i},${j}`);
+        }
+    }
+
+    // Remove invalid tiles
+    let index = valid_tiles.indexOf(`${snakeHeadX},${snakeHeadY}`);
+    if (index > -1) valid_tiles.splice(index, 1);
+    for (const segment of snakeSegments) {
+        index = valid_tiles.indexOf(`${segment[0]},${segment[1]}`);
+        if (index > -1) valid_tiles.splice(index, 1);
+    }
+
+    // Verify that there are valid tiles
+    if (valid_tiles.length == 0) return 1;
+
+    // Choose a random tile from what is left
+    let rand_index = randIntBetween(0, valid_tiles.length-1);
+
+    // Draw apple
+    let coord = valid_tiles[rand_index].split(',');
+    drawSegment(Number(coord[0]), Number(coord[1]), 15); // 15: of type 'apple'
+
+    appleX = Number(coord[0]);
+    appleY = Number(coord[1]);
+
+    return 0;
+}
 
 // Draw initial snake
 drawSegment(snakeHeadX, snakeHeadY, 13);
@@ -29,7 +80,7 @@ for (const segment of snakeSegments) {
 }
 
 // Draws the specified type of segment at the given coordinate.
-// Segment types can be a numeric value from 1-14 for the following:
+// Segment types can be a numeric value from 1-15 for the following:
 // 1: left-right (horizontal)
 // 2: up-down (vertical)
 // 3: up-to-left
@@ -44,6 +95,7 @@ for (const segment of snakeSegments) {
 // 12: head-going-left
 // 13: head-going-down
 // 14: head-going-right
+// 15: apple
 function drawSegment(x, y, type)
 {
     x *= pixelSize; // scale-up x
@@ -54,6 +106,7 @@ function drawSegment(x, y, type)
     ctx.lineWidth = thickness;
     let tail_length = pixelSize*0.5; // Length of tail before it starts curving
     let head_padding = pixelSize/10; // Decrease head radius by this padding so it doesnt butt-up against the pizel border
+    let apple_padding = pixelSize/6; // Same as head_padding but unique
 
     ctx.beginPath();
     switch(type)
@@ -130,18 +183,15 @@ function drawSegment(x, y, type)
             ctx.fill();
             ctx.fillRect(x, y + pixelSize/2 - thickness/2, pixelSize/2, thickness);
             break;
+        case 15:
+            ctx.arc(x + pixelSize/2, y + pixelSize/2, pixelSize/2 - apple_padding, 0, 2 * Math.PI); 
+            ctx.fillStyle = "red";
+            ctx.fill();
+            ctx.fillStyle = "green";
+            break;
     }
     ctx.closePath();
 }
-
-// TODO:
-// - Make a list of pivot coordinates and headings containing the following structures: (x, y, heading), 
-//   that is, where was the snake when it changed direction and what direction did it go in
-// - Make the snake body take up less space than the grid so that, when snake turns and starts slithering next to itself, the body
-//   parts dont appear merged into a big blob
-// - Give the snake a round head, perhaps
-// - Create a game loop that causes the snake to be forever moving
-// - Make the keyboard input change the snakes direction (heading)
 
 // Turn the snake based off of keyboard input
 document.addEventListener("keypress", function(e) {
@@ -300,10 +350,14 @@ function _drawSnake(newHeadX, newHeadY, heading, ateApple)
     snakeSegments.splice(0, 0, [prevSnakeHeadX, prevSnakeHeadY, neck_type]);
 
     // Draw rest of body (minus last segment and future tail)
-    for (let i = 0; i < snakeSegments.length - 2; i++) // Ignore last one and second-to-last one (which becomes the tail)
+    let upper_bound_diff = 2;
+    if (ateApple) upper_bound_diff = 0;
+    for (let i = 0; i < snakeSegments.length - upper_bound_diff; i++) // Ignore last one and second-to-last one (which becomes the tail)
     {
         drawSegment(snakeSegments[i][0], snakeSegments[i][1], snakeSegments[i][2]);
     }
+
+    if (ateApple) return;
 
     // Draw tail
     let pre_tail_segment = snakeSegments.at(-2); // The segment directly before the previous tail that will become the new tail
@@ -328,6 +382,12 @@ function _drawSnake(newHeadX, newHeadY, heading, ateApple)
     return;
 }
 
+// Draws the apple on the board
+function _drawApple()
+{
+    drawSegment(appleX, appleY, 15);
+}
+
 // Returns a random integer between two given values (inclusive)
 function randIntBetween(a, b) {
     return (Math.floor(Math.random() * b) + a);
@@ -339,17 +399,12 @@ function updateBoard(heading, ateApple)
     _clearGrid();
     _drawGrid();
     _drawSnake(snakeHeadX, snakeHeadY, heading, ateApple);
+    _drawApple();
 }
 
 // Returns a random rgb string value
 function randomColor() {
     return `rgb(${randIntBetween(0, 255)}, ${randIntBetween(0, 255)}, ${randIntBetween(0, 255)})`;
-}
-
-// Gives the snake another segment afetr eating an apple
-function eatApple()
-{
-    return;
 }
 
 // The top-level to run every game tick responsible for all game actions
@@ -394,17 +449,10 @@ function generateGameTick()
 
     // Determine if the snake ate an apple
     let ateApple = false;
-    // if ()
-    // {
-    //     ateApple = true;
-    //     eatApple();
-    // }
-
-    // Check if the snake changed headings
-    // if (heading != prevSnakeHeading)
-    // {
-        
-    // }
+    if (snakeHeadX + changeX == appleX && snakeHeadY + changeY == appleY)
+    {
+        ateApple = true;
+    }
 
     // Move the snake
     prevSnakeHeadX = snakeHeadX;
@@ -413,6 +461,9 @@ function generateGameTick()
     snakeHeadY += changeY;
     updateBoard(heading, ateApple);
     prevSnakeHeading = snakeHeading;
+
+    // Spawn new apple if necessary
+    if (ateApple) spawnApple();
 
 }
 
