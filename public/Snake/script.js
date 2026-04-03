@@ -16,14 +16,17 @@ var snakeHeadX = Math.floor(gameWidth/2);
 var snakeHeadY = Math.floor(gameHeight/2);
 var prevSnakeHeadX, prevSnakeHeadY;
 var snakeHeading = "down";
-var snakeSegments = [[snakeHeadX,snakeHeadY-1,7]]; // Order: neck -> tail. Format: [x,y,segment_type 1-14]. 
+var prevSnakeHeading = snakeHeading;
+var snakeSegments = [[snakeHeadX,snakeHeadY-1,2], [snakeHeadX,snakeHeadY-2,7]]; // Order: neck -> tail. Format: [x,y,segment_type 1-14]. 
 
 _clearGrid();
 _drawGrid();
 
 // Draw initial snake
 drawSegment(snakeHeadX, snakeHeadY, 13);
-// drawSegment(snakeSegments[0][0], snakeSegments[0][1], snakeSegments[0][2]);
+for (const segment of snakeSegments) {
+    drawSegment(segment[0], segment[1], segment[2])
+}
 
 // Draws the specified type of segment at the given coordinate.
 // Segment types can be a numeric value from 1-14 for the following:
@@ -226,26 +229,102 @@ function _drawGrid()
 // Draws the snake on the game board at the given location
 function _drawSnake(newHeadX, newHeadY, heading, ateApple)
 {
-    // Draw head
-    switch(heading)
-    {
-        case "up":
-            drawSegment(newHeadX, newHeadY, 11);
-            break;
-        case "left":
-            drawSegment(newHeadX, newHeadY, 12);
-            break;
-        case "down":
-            drawSegment(newHeadX, newHeadY, 13);
-            break;
-        case "right":
-            drawSegment(newHeadX, newHeadY, 14);
-            break;
-    }
-    // Draw neck
+    // Determine head and neck segment types
+    let head_type = 0; // The segment type for the head
+    let neck_type = 0; // The segment attached to the head; determined based on heading
 
-    // Draw rest of body (minus last segment)
+    // Handle neck type based on whether snake turned or not
+    if (snakeHeading == prevSnakeHeading) { // No turn
+        switch(heading)
+        {
+            case "up":
+                head_type = 11;
+                neck_type = 2;
+                break;
+            case "left":
+                head_type = 12;
+                neck_type = 1;
+                break;
+            case "down":
+                head_type = 13;
+                neck_type = 2;
+                break;
+            case "right":
+                head_type = 14;
+                neck_type = 1;
+                break;
+        }
+    } else { // Turn
+        switch(heading)
+        {
+            case "up":
+                head_type = 11;
+                if (prevSnakeHeading == "right") {
+                    neck_type = 3;
+                } else if (prevSnakeHeading == "left") {
+                    neck_type = 6;
+                }
+                break;
+            case "left":
+                head_type = 12;
+                if (prevSnakeHeading == "up") {
+                    neck_type = 4;
+                } else if (prevSnakeHeading == "down") {
+                    neck_type = 3;
+                }
+                break;
+            case "down":
+                head_type = 13;
+                if (prevSnakeHeading == "right") {
+                    neck_type = 4;
+                } else if (prevSnakeHeading == "left") {
+                    neck_type = 5;
+                }
+                break;
+            case "right":
+                head_type = 14;
+                if (prevSnakeHeading == "up") {
+                    neck_type = 5;
+                } else if (prevSnakeHeading == "down") {
+                    neck_type = 6;
+                }
+                break;
+        }
+    }
+
+    // Draw the head and neck
+    drawSegment(newHeadX, newHeadY, head_type); // Head
+    drawSegment(prevSnakeHeadX, prevSnakeHeadY, neck_type); // Neck
+
+    // Add neck to the segment list
+    snakeSegments.splice(0, 0, [prevSnakeHeadX, prevSnakeHeadY, neck_type]);
+
+    // Draw rest of body (minus last segment and future tail)
+    for (let i = 0; i < snakeSegments.length - 2; i++) // Ignore last one and second-to-last one (which becomes the tail)
+    {
+        drawSegment(snakeSegments[i][0], snakeSegments[i][1], snakeSegments[i][2]);
+    }
+
+    // Draw tail
+    let pre_tail_segment = snakeSegments.at(-2); // The segment directly before the previous tail that will become the new tail
+    let neighbor_segment = snakeSegments.at(-3); // The segment adjacent to the pre_tail_segment
+    let tail_type = 0; // The segment type for the tail
     
+    // Determine tail direction based on location of neighboring segment
+    if (neighbor_segment[1] > pre_tail_segment[1]) { // Tail going up
+        tail_type = 7;
+    } else if (neighbor_segment[0] > pre_tail_segment[0]) { // Tail going left
+        tail_type = 8;
+    } else if (neighbor_segment[1] < pre_tail_segment[1]) { // Tail going down
+        tail_type = 9;
+    } else { // Tail going right
+        tail_type = 10
+    }
+    drawSegment(pre_tail_segment[0], pre_tail_segment[1], tail_type);  
+    
+    // Remove old tail from segment list
+    snakeSegments.pop();
+
     return;
 }
 
@@ -321,12 +400,19 @@ function generateGameTick()
     //     eatApple();
     // }
 
+    // Check if the snake changed headings
+    // if (heading != prevSnakeHeading)
+    // {
+        
+    // }
+
     // Move the snake
     prevSnakeHeadX = snakeHeadX;
     prevSnakeHeadY = snakeHeadY;
     snakeHeadX += changeX;
     snakeHeadY += changeY;
     updateBoard(heading, ateApple);
+    prevSnakeHeading = snakeHeading;
 
 }
 
