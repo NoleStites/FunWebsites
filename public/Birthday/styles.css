@@ -8,6 +8,7 @@
 html, body {
     width: 100vw;
     height: 100dvh;
+    background-color: #a2d1e1;
 }
 
 body {
@@ -19,6 +20,7 @@ body {
         #3c78b5 75%,  /* Transitioning lighter blue */
         #a2d1e1 100%  /* Soft cyan/light haze (top of the sky) */
     );
+    background-repeat: no-repeat;
     margin: 0px auto;
 }
 
