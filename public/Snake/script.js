@@ -1,10 +1,3 @@
-// TODO:
-// - [DONE] Spawn apples
-// - Eat and respawn apples (no snake growth yet)
-// - Snake growth from apples
-// - Snake collision with self
-
-// - BUG: when eating apple, tail is not tail
 
 let gameBox = document.getElementById("gameBox");
 let gameCanvas = document.getElementById("gameCanvas");
@@ -12,6 +5,7 @@ gameCanvas.width = gameBox.offsetWidth;
 gameCanvas.height = gameBox.offsetHeight;
 
 var ctx = gameCanvas.getContext("2d");
+// var pixelSize = 50;
 var pixelSize = 50;
 var gameWidth = Math.floor(gameCanvas.width / pixelSize);
 var gameHeight = Math.floor(gameCanvas.height / pixelSize);
@@ -351,17 +345,20 @@ function _drawSnake(newHeadX, newHeadY, heading, ateApple)
 
     // Draw rest of body (minus last segment and future tail)
     let upper_bound_diff = 2;
-    if (ateApple) upper_bound_diff = 0;
+    if (ateApple) upper_bound_diff = 1;
     for (let i = 0; i < snakeSegments.length - upper_bound_diff; i++) // Ignore last one and second-to-last one (which becomes the tail)
     {
         drawSegment(snakeSegments[i][0], snakeSegments[i][1], snakeSegments[i][2]);
     }
 
-    if (ateApple) return;
+    // if (ateApple) return;
 
     // Draw tail
-    let pre_tail_segment = snakeSegments.at(-2); // The segment directly before the previous tail that will become the new tail
-    let neighbor_segment = snakeSegments.at(-3); // The segment adjacent to the pre_tail_segment
+    let apple_diff = 0;
+    if (ateApple) apple_diff = 1;
+
+    let pre_tail_segment = snakeSegments.at(-2 + apple_diff); // The segment directly before the previous tail that will become the new tail
+    let neighbor_segment = snakeSegments.at(-3 + apple_diff); // The segment adjacent to the pre_tail_segment
     let tail_type = 0; // The segment type for the tail
     
     // Determine tail direction based on location of neighboring segment
@@ -377,7 +374,7 @@ function _drawSnake(newHeadX, newHeadY, heading, ateApple)
     drawSegment(pre_tail_segment[0], pre_tail_segment[1], tail_type);  
     
     // Remove old tail from segment list
-    snakeSegments.pop();
+    if (!ateApple) snakeSegments.pop();
 
     return;
 }
@@ -442,10 +439,13 @@ function generateGameTick()
     }
 
     // Check if snake collides with self
-    // if()
-    // {
-        // endGame();
-    // }
+    for (const segment of snakeSegments)
+    {
+        if((snakeHeadX + changeX == segment[0]) && (snakeHeadY + changeY == segment[1]))
+        {
+            endGame();
+        }
+    }
 
     // Determine if the snake ate an apple
     let ateApple = false;
@@ -464,7 +464,6 @@ function generateGameTick()
 
     // Spawn new apple if necessary
     if (ateApple) spawnApple();
-
 }
 
 // Logic for terminating the game
@@ -478,5 +477,6 @@ function endGame()
 // Begins the game logic (and loop timer)
 function startGameLoop()
 {
-    gameIntervalID = setInterval(generateGameTick, 500);
+    // gameIntervalID = setInterval(generateGameTick, 500);
+    gameIntervalID = setInterval(generateGameTick, 200);
 }
