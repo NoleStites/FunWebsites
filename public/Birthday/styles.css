@@ -37,12 +37,12 @@ body {
     padding: 20px 10px;
     /* outline: 1px solid green; */
     flex-direction: column;
-    gap: 20px;
+    gap: 30px;
 }
 
 #outputCanvas {
     /* outline: 1px solid purple; */
-    width: 80%;
+    width: 90%;
     max-width: 480px;
     image-rendering: pixelated; 
     image-rendering: crisp-edges;
@@ -67,4 +67,5 @@ body {
     border: none;
     font-size: 5cqw;
     color: black;
+    touch-action: manipulation;
 }
