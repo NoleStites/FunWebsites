@@ -1,6 +1,7 @@
 // <!-- THIS FILE CONTAINS CODE RELATING TO OVERCOOKED -->
 
 var resolution = 0;
+var counter = 0; // times res btn has been clicked/tapped
 
 incrementResolution();
 
@@ -8,6 +9,12 @@ function incrementResolution()
 {
     resolution += 1;
     runPixelation(resolution);
+    
+    if (counter++ == 5) {
+      let nextBtn = document.getElementById("nextBtn");
+      nextBtn.style.opacity = "100%";
+      nextBtn.style.pointerEvents = "all";
+    }
 }
 
 function runPixelation(resolution) {
@@ -20,6 +27,8 @@ function runPixelation(resolution) {
     pixelate(img, canvas, resolution);
   } else {
     img.onload = () => pixelate(img, canvas, resolution);
+    let resBtn = document.getElementById("resBtn");
+    resBtn.style.pointerEvents = "all";
   }
 }
 
@@ -80,4 +89,29 @@ function pixelate(img, canvas, targetWidth) {
       ctx.fillRect(startX, startY, Math.ceil(scaleFactor), Math.ceil(scaleFactor));
     }
   }
+}
+
+function initiateNextGift()
+{
+  let canvas = document.getElementById("outputCanvas");
+  let resBtn = document.getElementById("resBtn");
+
+  canvas.style.opacity = "0%";
+  resBtn.style.pointerEvents = "none";
+  resBtn.style.opacity = "0%";
+
+  let mask = document.getElementById("mask");
+  mask.style.display = "flex";
+  setTimeout(() => {
+    mask.style.opacity = "100%";
+    displayLink();
+  }, 2000);
+}
+
+function displayLink()
+{
+  let twiBtn = document.getElementById("twilightBtn");
+  setTimeout(() => {
+    twiBtn.style.opacity = "100%";
+  }, 2000);
 }

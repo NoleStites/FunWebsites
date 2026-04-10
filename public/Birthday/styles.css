@@ -24,6 +24,22 @@ body {
     margin: 0px auto;
 }
 
+#mask {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(
+        180deg,
+        #050101 0%,   /* Obsidian void (The shadow of the crypt) */
+        #1a0505 35%,  /* Dried blood / Deep mahogany */
+        #660000 70%,  /* Arterial crimson (The primary focal color) */
+        #2b2b2b 100%  /* Cold slate/ash (The final resting place) */
+    );
+    opacity: 0%;
+    transition: 2s opacity;
+    display: none;
+}
+
 .flex-center {
     display: flex;
     justify-content: center;
@@ -46,6 +62,7 @@ body {
     max-width: 480px;
     image-rendering: pixelated; 
     image-rendering: crisp-edges;
+    transition: 2s opacity;
 }
 
 
@@ -58,7 +75,7 @@ body {
     "wdth" 100;
 }
 
-#resBtn {
+#resBtn, #nextBtn, #twilightBtn {
     /* width: 70%; */
     max-width: 450px;
     padding: 30px;
@@ -68,4 +85,21 @@ body {
     font-size: 5cqw;
     color: black;
     touch-action: manipulation;
+    transition: 2s opacity;
+}
+
+#nextBtn {
+    pointer-events: none;
+    opacity: 0%;
+}
+
+a {
+    text-decoration: none;
+}
+
+#twilightBtn {
+    background-color: black;
+    color: rgb(164, 0, 0);
+    opacity: 0%;
+    transition: 2s opacity;
 }
