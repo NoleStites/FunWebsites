@@ -59,6 +59,14 @@ body {
     gap: 50px;
 }
 
+#resCount {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 20px;
+    color: white;
+}
+
 #outputCanvas {
     /* outline: 1px solid purple; */
     width: 90%;
@@ -107,6 +115,7 @@ a {
     opacity: 0%;
     transition: 2s opacity;
     animation: pulse-outline 1s infinite;
+    padding: 40px;
 }
 
 @keyframes pulse-outline {

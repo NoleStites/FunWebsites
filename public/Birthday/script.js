@@ -3,11 +3,14 @@
 var resolution = 0;
 var counter = 0; // times res btn has been clicked/tapped
 
+let resCount = document.getElementById("resCount");
+
 incrementResolution();
 
 function incrementResolution()
 {
     resolution += 1;
+    resCount.innerText = `${counter}`;
     runPixelation(resolution);
     
     if (counter++ == 60) {
