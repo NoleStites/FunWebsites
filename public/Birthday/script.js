@@ -10,8 +10,9 @@ function incrementResolution()
     resolution += 1;
     runPixelation(resolution);
     
-    if (counter++ == 5) {
+    if (counter++ == 60) {
       let nextBtn = document.getElementById("nextBtn");
+      nextBtn.style.transition = "2s opacity";
       nextBtn.style.opacity = "100%";
       nextBtn.style.pointerEvents = "all";
     }
