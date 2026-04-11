@@ -13,7 +13,7 @@ function incrementResolution()
     resCount.innerText = `${counter}`;
     runPixelation(resolution);
     
-    if (counter++ == 60) {
+    if (counter++ == 5) {
       let nextBtn = document.getElementById("nextBtn");
       nextBtn.style.transition = "2s opacity";
       nextBtn.style.opacity = "100%";
@@ -99,10 +99,14 @@ function initiateNextGift()
 {
   let canvas = document.getElementById("outputCanvas");
   let resBtn = document.getElementById("resBtn");
+  let nextBtn = document.getElementById("nextBtn");
+  let resCount = document.getElementById("resCount");
 
   canvas.style.opacity = "0%";
   resBtn.style.pointerEvents = "none";
   resBtn.style.opacity = "0%";
+  nextBtn.style.opacity = "0%";
+  resCount.style.opacity = "0%";
 
   let mask = document.getElementById("mask");
   mask.style.display = "flex";
@@ -117,5 +121,5 @@ function displayLink()
   let twiBtn = document.getElementById("twilightBtn");
   setTimeout(() => {
     twiBtn.style.opacity = "100%";
-  }, 2000);
+  }, 4000);
 }
