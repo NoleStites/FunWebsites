@@ -13,7 +13,7 @@ function incrementResolution()
     resCount.innerText = `${counter}`;
     runPixelation(resolution);
     
-    if (counter++ == 5) {
+    if (counter++ == 60) {
       let nextBtn = document.getElementById("nextBtn");
       nextBtn.style.transition = "2s opacity";
       nextBtn.style.opacity = "100%";
@@ -121,5 +121,5 @@ function displayLink()
   let twiBtn = document.getElementById("twilightBtn");
   setTimeout(() => {
     twiBtn.style.opacity = "100%";
-  }, 4000);
+  }, 3000);
 }
