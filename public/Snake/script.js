@@ -1,14 +1,25 @@
+// TODO
+// - Dynamically size the cells to fit a 20x12 game onto to screen
+// - Create a retro-style splash screen overlaying the game with the start button
 
 let gameBox = document.getElementById("gameBox");
 let gameCanvas = document.getElementById("gameCanvas");
 gameCanvas.width = gameBox.offsetWidth;
 gameCanvas.height = gameBox.offsetHeight;
 
+const root = document.documentElement;
+var styles = getComputedStyle(root);
+var snakeColor = styles.getPropertyValue('--snake-color').trim();
+var appleColor = styles.getPropertyValue('--apple-color').trim();
+var accent = styles.getPropertyValue('--accent').trim();
+
 var ctx = gameCanvas.getContext("2d");
 // var pixelSize = 50;
 var pixelSize = 50;
 var gameWidth = Math.floor(gameCanvas.width / pixelSize);
 var gameHeight = Math.floor(gameCanvas.height / pixelSize);
+// gameWidth = 12;
+// gameHeight = 20;
 gameCanvas.width = pixelSize * gameWidth;
 gameCanvas.height = pixelSize * gameHeight;
 
@@ -18,15 +29,73 @@ var snakeHeadX = Math.floor(gameWidth/2);
 var snakeHeadY = Math.floor(gameHeight/2);
 var prevSnakeHeadX, prevSnakeHeadY;
 var snakeHeading = "down";
+var nextSnakeHeading = "down";
 var prevSnakeHeading = snakeHeading;
 var snakeSegments = [[snakeHeadX,snakeHeadY-1,2], [snakeHeadX,snakeHeadY-2,7]]; // Order: neck -> tail. Format: [x,y,segment_type 1-14]. 
 
 var appleX = 0;
 var appleY = 0;
+var score = 0;
 
-_clearGrid();
-_drawGrid();
-spawnApple();
+var gameStarted = false;
+const isTouch = 'ontouchstart' in window;
+
+// _clearGrid();
+// _drawGrid();
+// spawnApple();
+
+// Color theme logic
+const themeSelect = document.getElementById('theme-select');
+
+themeSelect.addEventListener('change', function() {
+    changePalette(this.value);
+});
+
+// To keep the dropdown in sync if you load a saved theme from localStorage:
+const savedTheme = localStorage.getItem('selectedTheme');
+if (savedTheme) {
+    themeSelect.value = savedTheme;
+    changePalette(savedTheme);
+}
+
+// Changes the color palette used on the webpage to one of the chosen themes:
+// - []
+// - []
+function changePalette(themeName) {
+    // This one line of code updates the entire site instantly
+    document.documentElement.setAttribute('data-theme', themeName);
+    
+    // Optional: Save the choice so it persists after refresh
+    localStorage.setItem('selectedTheme', themeName);
+
+    // Reset JS vars
+    styles = getComputedStyle(root);
+    snakeColor = styles.getPropertyValue('--snake-color').trim();
+    appleColor = styles.getPropertyValue('--apple-color').trim();
+    accent = styles.getPropertyValue('--accent').trim();
+}
+
+function initializeGame()
+{
+    snakeHeadX = Math.floor(gameWidth/2);
+    snakeHeadY = Math.floor(gameHeight/2);
+    prevSnakeHeadX, prevSnakeHeadY;
+    snakeHeading = "down";
+    nextSnakeHeading = "down";
+    prevSnakeHeading = snakeHeading;
+    snakeSegments = [[snakeHeadX,snakeHeadY-1,2], [snakeHeadX,snakeHeadY-2,7]];
+    score = 0;
+    updateScore();
+
+    _clearGrid();
+    _drawGrid();
+    // Draw initial snake
+    drawSegment(snakeHeadX, snakeHeadY, 13);
+    for (const segment of snakeSegments) {
+        drawSegment(segment[0], segment[1], segment[2])
+    }
+    spawnApple();
+}
 
 // Spawns a new apple randomly on the board (excludes snake tiles)
 // Returns 0 if apple spawned
@@ -67,12 +136,6 @@ function spawnApple()
     return 0;
 }
 
-// Draw initial snake
-drawSegment(snakeHeadX, snakeHeadY, 13);
-for (const segment of snakeSegments) {
-    drawSegment(segment[0], segment[1], segment[2])
-}
-
 // Draws the specified type of segment at the given coordinate.
 // Segment types can be a numeric value from 1-15 for the following:
 // 1: left-right (horizontal)
@@ -94,8 +157,8 @@ function drawSegment(x, y, type)
 {
     x *= pixelSize; // scale-up x
     y *= pixelSize; // scale-up y
-    ctx.fillStyle = "green";
-    ctx.strokeStyle = "green";
+    ctx.fillStyle = snakeColor;
+    ctx.strokeStyle = snakeColor;
     let thickness = pixelSize*0.5; // Segment thickness
     ctx.lineWidth = thickness;
     let tail_length = pixelSize*0.5; // Length of tail before it starts curving
@@ -179,16 +242,16 @@ function drawSegment(x, y, type)
             break;
         case 15:
             ctx.arc(x + pixelSize/2, y + pixelSize/2, pixelSize/2 - apple_padding, 0, 2 * Math.PI); 
-            ctx.fillStyle = "red";
+            ctx.fillStyle = appleColor;
             ctx.fill();
-            ctx.fillStyle = "green";
+            ctx.fillStyle = snakeColor;
             break;
     }
     ctx.closePath();
 }
 
 // Turn the snake based off of keyboard input
-document.addEventListener("keypress", function(e) {
+document.addEventListener("keydown", function(e) {
     // Check direction of movement based on the key pressed
     switch (e.key) {
         case 'w':
@@ -219,7 +282,7 @@ function handleMovementUp()
 {
     if (snakeHeading == "left" || snakeHeading == "right")
     {
-        snakeHeading = "up";
+        nextSnakeHeading = "up";
     }
 }
 
@@ -227,7 +290,7 @@ function handleMovementLeft()
 {
     if (snakeHeading == "up" || snakeHeading == "down")
     {
-        snakeHeading = "left";
+        nextSnakeHeading = "left";
     }
 }
 
@@ -235,7 +298,7 @@ function handleMovementDown()
 {
     if (snakeHeading == "left" || snakeHeading == "right")
     {
-        snakeHeading = "down";
+        nextSnakeHeading = "down";
     }
 }
 
@@ -243,7 +306,7 @@ function handleMovementRight()
 {
     if (snakeHeading == "up" || snakeHeading == "down")
     {
-        snakeHeading = "right";
+        nextSnakeHeading = "right";
     }
 }
 
@@ -395,8 +458,13 @@ function updateBoard(heading, ateApple)
 {
     _clearGrid();
     _drawGrid();
-    _drawSnake(snakeHeadX, snakeHeadY, heading, ateApple);
     _drawApple();
+    _drawSnake(snakeHeadX, snakeHeadY, heading, ateApple);
+}
+
+function updateScore()
+{
+    document.getElementById("score").innerText = score;
 }
 
 // Returns a random rgb string value
@@ -408,7 +476,8 @@ function randomColor() {
 function generateGameTick()
 {
     // Fetch current heading
-    let heading = snakeHeading;
+    let heading = nextSnakeHeading;
+    snakeHeading = heading;
     let changeX, changeY = 0;
 
     // Assuming +x is right and +y is down
@@ -452,6 +521,8 @@ function generateGameTick()
     if (snakeHeadX + changeX == appleX && snakeHeadY + changeY == appleY)
     {
         ateApple = true;
+        score += 10;
+        updateScore();
     }
 
     // Move the snake
@@ -470,6 +541,7 @@ function generateGameTick()
 function endGame()
 {
     clearInterval(gameIntervalID);
+    gameStarted = false;
     console.log("GAME OVER");
     return;
 }
@@ -477,6 +549,115 @@ function endGame()
 // Begins the game logic (and loop timer)
 function startGameLoop()
 {
+    if (gameStarted) {return;}
+
     // gameIntervalID = setInterval(generateGameTick, 500);
+    gameStarted = true;
+    initializeGame();
+    document.getElementById("splashScreen").style.opacity = "0";
     gameIntervalID = setInterval(generateGameTick, 200);
 }
+
+
+// DPAD CONTROLS
+const directions = {
+  dpadUp: handleMovementUp,
+  dpadDown: handleMovementDown,
+  dpadLeft: handleMovementLeft,
+  dpadRight: handleMovementRight
+};
+
+Object.entries(directions).forEach(([id, handler]) => {
+  const el = document.getElementById(id);
+
+  if (isTouch) { // Add a touch listener for mobile users
+    el.addEventListener("touchend", (e) => {
+      e.preventDefault(); // stop synthetic click
+      // Do nothing if the game is not in focus
+        // if (document.activeElement !== game) {
+        //     return;
+        // }
+
+        // // Do nothing if the game hasnt started or is finished
+        // if (!gameStarted || gameFinished) {
+        //     return;
+        // }
+      handler();
+    }, { passive: false });
+  } else { // Add a mouse listener for desktop users
+    el.addEventListener("click", function() {
+        // Do nothing if the game is not in focus
+        // if (document.activeElement !== game) {
+        //     return;
+        // }
+
+        // // Do nothing if the game hasnt started or is finished
+        // if (!gameStarted || gameFinished) {
+        //     return;
+        // }
+        handler();
+    });
+  }
+});
+
+// Mobile-friendly input detection (vertical and horizontal swipes)
+let touchStartX = 0;
+let touchStartY = 0;
+
+document.addEventListener("touchstart", (event) => {
+    // Only blur the canvas if tapping outside the canvas AND dpad
+    // if (event.target !== game && !dpad.contains(event.target)) {
+    //     game.blur();
+    // }
+
+    // // Do nothing if the game is not in focus
+    // if (document.activeElement !== game) {
+    //     return;
+    // }
+
+    // // Do nothing if the game hasnt started or is finished
+    // if (!gameStarted || gameFinished) {
+    //     return;
+    // }
+
+    const touch = event.changedTouches[0];
+    touchStartX = touch.screenX;
+    touchStartY = touch.screenY;
+}, false);
+
+document.addEventListener("touchend", (event) => {
+    // Do nothing if the game is not in focus
+    // if (document.activeElement !== game) {
+    //     return;
+    // }
+
+    // // Do nothing if the game hasnt started or is finished
+    // if (!gameStarted || gameFinished) {
+    //     return;
+    // }
+    
+    const touch = event.changedTouches[0];
+    const dx = touch.screenX - touchStartX;
+    const dy = touch.screenY - touchStartY;
+
+    // Determine if swipe is horizontal or vertical
+    if (Math.abs(dx) > Math.abs(dy)) {
+        // Horizontal swipe
+        if (dx > 30) {
+            // console.log("Swipe right"); // → move right
+            handleMovementRight();
+        } else if (dx < -30) {
+            // console.log("Swipe left");  // → move left
+            handleMovementLeft();
+        }
+    } else {
+        // Vertical swipe
+        if (dy > 30) {
+            // console.log("Swipe down");  // ↓ move down
+            handleMovementDown();
+        } else if (dy < -30) {
+            // console.log("Swipe up");    // ↑ move up
+            handleMovementUp();
+        }
+    }
+}, false);

@@ -1,0 +1,59 @@
+/* 1. Monolith (Ultra-Minimalist Dark) */
+/* Focuses on pure contrast and zero distractions. */
+[data-theme="monolith"] {
+    --page-bg: #000000;
+    --board-bg: #080808;
+    --snake-color: #FFFFFF;
+    --apple-color: #00FF41; /* "Matrix" Green */
+    --ui-text: #444444;
+}
+
+/* 2. Nord Frost (Cool & Modern) */
+/* Based on the popular 'Nord' palette; very clean and professional. */
+[data-theme="nord"] {
+    --page-bg: #2E3440;
+    --board-bg: #3B4252;
+    --snake-color: #88C0D0; /* Frost Blue */
+    --apple-color: #BF616A; /* Muted Red */
+    --ui-text: #D8DEE9;
+}
+
+/* 3. Parchment (Warm Light Mode) */
+/* Easy on the eyes for a light theme, using a "Zen" natural feel. */
+[data-theme="parchment"] {
+    --page-bg: #F5F2E9;
+    --board-bg: #EBE7DA;
+    --snake-color: #4A5D4E; /* Forest Green */
+    --apple-color: #C1666B; /* Terracotta */
+    --ui-text: #8C8A81;
+}
+
+/* 4. Cyberpunk (Night City) */
+/* High energy but still simplistic by using only two vivid colors. */
+[data-theme="cyberpunk"] {
+    --page-bg: #0B0E14;
+    --board-bg: #151921;
+    --snake-color: #F0DB4F; /* Cyber Yellow */
+    --apple-color: #FF00FF; /* Neon Magenta */
+    --ui-text: #4E5569;
+}
+
+/* 5. Slate & Gold (Sophisticated) */
+/* A rich, muted look that feels premium. */
+[data-theme="slate"] {
+    --page-bg: #1A1C22;
+    --board-bg: #252830;
+    --snake-color: #F9D371; /* Gold */
+    --apple-color: #FFFFFF; /* White */
+    --ui-text: #6A7282;
+}
+
+/* 6. Dracula (The Vampire Aesthetic) */
+/* Leaning into the moody obsidian and crimson vibes you like. */
+[data-theme="vampire"] {
+    --page-bg: #100C0D;
+    --board-bg: #1A1415;
+    --snake-color: #E9E9E9; /* Soft White */
+    --apple-color: #950101; /* Deep Blood Red */
+    --ui-text: #5C4B4B;
+}
