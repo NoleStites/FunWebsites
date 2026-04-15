@@ -14,12 +14,11 @@ var appleColor = styles.getPropertyValue('--apple-color').trim();
 var accent = styles.getPropertyValue('--accent').trim();
 
 var ctx = gameCanvas.getContext("2d");
-// var pixelSize = 50;
 var pixelSize = 50;
-var gameWidth = Math.floor(gameCanvas.width / pixelSize);
-var gameHeight = Math.floor(gameCanvas.height / pixelSize);
-// gameWidth = 12;
-// gameHeight = 20;
+// var gameWidth = Math.floor(gameCanvas.width / pixelSize);
+// var gameHeight = Math.floor(gameCanvas.height / pixelSize);
+gameWidth = 12;
+gameHeight = 20;
 gameCanvas.width = pixelSize * gameWidth;
 gameCanvas.height = pixelSize * gameHeight;
 
@@ -41,8 +40,18 @@ var gameStarted = false;
 const isTouch = 'ontouchstart' in window;
 
 // _clearGrid();
-// _drawGrid();
+_drawGrid();
 // spawnApple();
+
+// Dpad toggle
+document.getElementById("dpad-toggle").addEventListener("change", function() {
+    const dpad = document.getElementById("dpad");
+    if (this.checked) {
+        dpad.style.display = "block";
+    } else {
+        dpad.style.display = "none";
+    }
+});
 
 // Color theme logic
 const themeSelect = document.getElementById('theme-select');
@@ -85,7 +94,6 @@ function initializeGame()
     prevSnakeHeading = snakeHeading;
     snakeSegments = [[snakeHeadX,snakeHeadY-1,2], [snakeHeadX,snakeHeadY-2,7]];
     score = 0;
-    updateScore();
 
     _clearGrid();
     _drawGrid();
@@ -462,11 +470,6 @@ function updateBoard(heading, ateApple)
     _drawSnake(snakeHeadX, snakeHeadY, heading, ateApple);
 }
 
-function updateScore()
-{
-    document.getElementById("score").innerText = score;
-}
-
 // Returns a random rgb string value
 function randomColor() {
     return `rgb(${randIntBetween(0, 255)}, ${randIntBetween(0, 255)}, ${randIntBetween(0, 255)})`;
@@ -504,7 +507,7 @@ function generateGameTick()
     // Check if snake is moving out of bounds
     if (snakeHeadX + changeX > gameWidth-1 || snakeHeadX + changeX < 0 || snakeHeadY + changeY > gameHeight-1 || snakeHeadY + changeY < 0)
     {
-        endGame();
+        endGame(won=false);
     }
 
     // Check if snake collides with self
@@ -512,7 +515,7 @@ function generateGameTick()
     {
         if((snakeHeadX + changeX == segment[0]) && (snakeHeadY + changeY == segment[1]))
         {
-            endGame();
+            endGame(won=false);
         }
     }
 
@@ -522,7 +525,6 @@ function generateGameTick()
     {
         ateApple = true;
         score += 10;
-        updateScore();
     }
 
     // Move the snake
@@ -538,12 +540,40 @@ function generateGameTick()
 }
 
 // Logic for terminating the game
-function endGame()
+// params:
+// won: bool
+function endGame(won)
 {
     clearInterval(gameIntervalID);
     gameStarted = false;
-    console.log("GAME OVER");
+
+    const endScreen = document.getElementById('game-end-splash');
+    const scoreDisplay = document.getElementById('end-score');
+    
+    // Update the UI
+    scoreDisplay.innerText = `SCORE: ${score}`;
+
+    if (won) {
+        document.getElementById('end-title').innerText = "YOU WIN!";
+        document.getElementById('end-title').style.color = "var(--snake-color)";
+    } else {
+        document.getElementById('end-title').innerText = "GAME OVER";
+        document.getElementById('end-title').style.color = "var(--end-title)";
+    }
+    
+    // Show the screen
+    endScreen.style.display = 'flex';
+
     return;
+}
+
+function showMenu()
+{
+    // Hide end screen
+    document.getElementById('game-end-splash').style.display = "none";
+
+    // Show menu
+    document.getElementById("splashScreen").style.display = "flex";
 }
 
 // Begins the game logic (and loop timer)
@@ -554,7 +584,7 @@ function startGameLoop()
     // gameIntervalID = setInterval(generateGameTick, 500);
     gameStarted = true;
     initializeGame();
-    document.getElementById("splashScreen").style.opacity = "0";
+    document.getElementById("splashScreen").style.display = "none";
     gameIntervalID = setInterval(generateGameTick, 200);
 }
 
