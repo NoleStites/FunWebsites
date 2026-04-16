@@ -1,3 +1,6 @@
+// TODO
+// - Theme selector arrows are always black (fix me)
+
 let gameBox = document.getElementById("gameBox");
 let gameCanvas = document.getElementById("gameCanvas");
 gameCanvas.width = gameBox.offsetWidth;
@@ -8,6 +11,7 @@ var styles = getComputedStyle(root);
 var snakeColor = styles.getPropertyValue('--snake-color').trim();
 var appleColor = styles.getPropertyValue('--apple-color').trim();
 var accent = styles.getPropertyValue('--accent').trim();
+var ui_text = styles.getPropertyValue('--ui-text').trim();
 
 var ctx = gameCanvas.getContext("2d");
 var pixelSize = 50;
@@ -37,7 +41,7 @@ var gameStarted = false;
 const isTouch = 'ontouchstart' in window;
 
 // _clearGrid();
-_drawGrid();
+// _drawGrid();
 // spawnApple();
 
 // Dpad toggle
@@ -327,7 +331,7 @@ function _drawGrid()
 {
     // ctx.fillStyle = "red";
     ctx.lineWidth = 1;
-    ctx.strokeStyle = "black";
+    ctx.strokeStyle = ui_text;
     for (let i = 0; i < gameWidth; i++)
     {
         for (let j = 0; j < gameHeight; j++)
