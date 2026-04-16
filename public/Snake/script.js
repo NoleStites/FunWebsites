@@ -594,6 +594,8 @@ function showMenu()
     // Hide end screen
     document.getElementById('game-end-splash').style.display = "none";
 
+    document.getElementById("gameCanvas").style.opacity = "0";
+
     // Show menu
     document.getElementById("splashScreen").style.display = "flex";
 }
@@ -607,6 +609,7 @@ function startGameLoop()
     gameStarted = true;
     initializeGame();
     document.getElementById("splashScreen").style.display = "none";
+    document.getElementById("gameCanvas").style.opacity = "1";
     toggleScore();
     gameIntervalID = setInterval(generateGameTick, gameSpeed);
 }

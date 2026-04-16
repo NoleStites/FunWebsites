@@ -188,15 +188,24 @@ body {
 }
 
 #theme-select {
-    background: transparent;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    background-color: transparent;
     color: var(--label-text);
-    border: 1px solid var(--select-border);
-    padding: 6px 12px;
+    border: 1px solid var(--label-text);
+    padding: 5px 30px 5px 10px;
     font-family: monospace;
-    font-size: 0.9rem;
     cursor: pointer;
-    outline: none;
-    transition: all 0.3s ease;
+
+    background-image: linear-gradient(45deg, transparent 50%, var(--label-text) 50%),
+                      linear-gradient(135deg, var(--label-text) 50%, transparent 50%);
+    background-position: calc(100% - 15px) calc(1em + 2px),
+                         calc(100% - 10px) calc(1em + 2px);
+    background-size: 5px 5px,
+                     5px 5px;
+    background-repeat: no-repeat;
 }
 
 #theme-select option {
@@ -205,6 +214,7 @@ body {
 }
 
 #gameCanvas {
+    opacity: 0;
     width: 100%;
     /* aspect-ratio: 12/20; */
     /* max-height: 90vh; */
