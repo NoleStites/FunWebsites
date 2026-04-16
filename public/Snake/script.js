@@ -1,7 +1,3 @@
-// TODO
-// - Dynamically size the cells to fit a 20x12 game onto to screen
-// - Create a retro-style splash screen overlaying the game with the start button
-
 let gameBox = document.getElementById("gameBox");
 let gameCanvas = document.getElementById("gameCanvas");
 gameCanvas.width = gameBox.offsetWidth;
@@ -23,6 +19,7 @@ gameCanvas.width = pixelSize * gameWidth;
 gameCanvas.height = pixelSize * gameHeight;
 
 var gameIntervalID;
+var gameSpeed = 200; // Larger = slower
 
 var snakeHeadX = Math.floor(gameWidth/2);
 var snakeHeadY = Math.floor(gameHeight/2);
@@ -94,6 +91,7 @@ function initializeGame()
     prevSnakeHeading = snakeHeading;
     snakeSegments = [[snakeHeadX,snakeHeadY-1,2], [snakeHeadX,snakeHeadY-2,7]];
     score = 0;
+    updateScore();
 
     _clearGrid();
     _drawGrid();
@@ -259,7 +257,7 @@ function drawSegment(x, y, type)
 }
 
 // Turn the snake based off of keyboard input
-document.addEventListener("keydown", function(e) {
+window.addEventListener("keydown", function(e) {
     // Check direction of movement based on the key pressed
     switch (e.key) {
         case 'w':
@@ -422,8 +420,6 @@ function _drawSnake(newHeadX, newHeadY, heading, ateApple)
         drawSegment(snakeSegments[i][0], snakeSegments[i][1], snakeSegments[i][2]);
     }
 
-    // if (ateApple) return;
-
     // Draw tail
     let apple_diff = 0;
     if (ateApple) apple_diff = 1;
@@ -443,7 +439,8 @@ function _drawSnake(newHeadX, newHeadY, heading, ateApple)
         tail_type = 10
     }
     drawSegment(pre_tail_segment[0], pre_tail_segment[1], tail_type);  
-    
+    pre_tail_segment[2] = tail_type;
+
     // Remove old tail from segment list
     if (!ateApple) snakeSegments.pop();
 
@@ -475,11 +472,22 @@ function randomColor() {
     return `rgb(${randIntBetween(0, 255)}, ${randIntBetween(0, 255)}, ${randIntBetween(0, 255)})`;
 }
 
+function toggleScore() {
+    document.getElementById("score").classList.toggle("hidden");
+}
+
+function updateScore() {
+    document.getElementById("score").innerText = `${score}`;
+}
+
 // The top-level to run every game tick responsible for all game actions
 function generateGameTick()
 {
     // Fetch current heading
+    // console.log("Start Tick");
     let heading = nextSnakeHeading;
+    // console.log(`Heading: ${heading}`);
+
     snakeHeading = heading;
     let changeX, changeY = 0;
 
@@ -513,6 +521,10 @@ function generateGameTick()
     // Check if snake collides with self
     for (const segment of snakeSegments)
     {
+        // Tail is about to move, so dont collide with it
+        if ([7, 8, 9, 10].includes(segment[2])) { break; }
+
+        // Collide with other segments
         if((snakeHeadX + changeX == segment[0]) && (snakeHeadY + changeY == segment[1]))
         {
             endGame(won=false);
@@ -525,6 +537,7 @@ function generateGameTick()
     {
         ateApple = true;
         score += 10;
+        updateScore();
     }
 
     // Move the snake
@@ -536,7 +549,11 @@ function generateGameTick()
     prevSnakeHeading = snakeHeading;
 
     // Spawn new apple if necessary
-    if (ateApple) spawnApple();
+    if (ateApple) {
+        if (spawnApple() == 1) {
+            endGame(won=true);
+        }
+    }
 }
 
 // Logic for terminating the game
@@ -562,6 +579,7 @@ function endGame(won)
     }
     
     // Show the screen
+    toggleScore();
     endScreen.style.display = 'flex';
 
     return;
@@ -585,7 +603,8 @@ function startGameLoop()
     gameStarted = true;
     initializeGame();
     document.getElementById("splashScreen").style.display = "none";
-    gameIntervalID = setInterval(generateGameTick, 200);
+    toggleScore();
+    gameIntervalID = setInterval(generateGameTick, gameSpeed);
 }
 
 
@@ -635,21 +654,6 @@ let touchStartX = 0;
 let touchStartY = 0;
 
 document.addEventListener("touchstart", (event) => {
-    // Only blur the canvas if tapping outside the canvas AND dpad
-    // if (event.target !== game && !dpad.contains(event.target)) {
-    //     game.blur();
-    // }
-
-    // // Do nothing if the game is not in focus
-    // if (document.activeElement !== game) {
-    //     return;
-    // }
-
-    // // Do nothing if the game hasnt started or is finished
-    // if (!gameStarted || gameFinished) {
-    //     return;
-    // }
-
     const touch = event.changedTouches[0];
     touchStartX = touch.screenX;
     touchStartY = touch.screenY;

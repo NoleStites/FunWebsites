@@ -14,7 +14,9 @@
         
         <script src="./script.js" defer></script>
     </head>
-    <body class="flex">
+    <body>
+        <div id="content">
+        <h1 id="score" class="hidden">--</h1>
         <div id="gameBox" class="flex">
             <section id="splashScreen" class="flex">
                 <h1 id="title" class="pixelify-sans-title">Snake</h1>
@@ -52,6 +54,7 @@
             <button id="dpadDown" class="dpadDirection" tabindex="-1">▼</button>
             <button id="dpadLeft" class="dpadDirection" tabindex="-1">◀</button>
             <button id="dpadRight" class="dpadDirection" tabindex="-1">▶</button>
+        </div>
         </div>
     </body>
 </html>
