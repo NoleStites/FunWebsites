@@ -1,5 +1,5 @@
 // TODO
-// - Theme selector arrows are always black (fix me)
+// - Figure out dpad placement
 
 let gameBox = document.getElementById("gameBox");
 let gameCanvas = document.getElementById("gameCanvas");
