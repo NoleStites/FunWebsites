@@ -5,18 +5,73 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="./styles.css" rel="stylesheet" />
         <script src="./script.js" defer></script>
+        <script src="./audioControls.js" defer></script>
     </head>
     <body>
         <section id="content">
             <div id="upperSection">
-                <div id="splash"><h3>Splash screen text</h3></div>
+                <div id="slideBox">
+                    <section class="slide titleSlide">
+                        <h1 class="blur">Mother's Day 2026</h1>
+                    </section>
+                    <section class="slide audioSlide">
+                        <audio src="./assets/test.mp3"></audio>
+                        <div class="audio-player blur">
+                            <button class="controlBtn restartBtn" type="button">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 4v6h6" />
+                                    <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
+                                </svg>
+                            </button>
+
+                            <button class="controlBtn playBtn" type="button">
+                                <svg viewBox="0 0 24 24" fill="white" width="30" height="30">
+                                    <path class="playIcon" d="M8 5v14l11-7z" />
+                                </svg>
+                            </button>
+                            <p class="bubbleText">Kaylin</p>
+                        </div>
+                    </section>
+                    <section class="slide audioSlide">
+                        <audio src="./assets/test.mp3"></audio>
+                        <div class="audio-player blur">
+                            <button class="controlBtn restartBtn" type="button">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 4v6h6" />
+                                    <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
+                                </svg>
+                            </button>
+
+                            <button class="controlBtn playBtn" type="button">
+                                <svg viewBox="0 0 24 24" fill="white" width="30" height="30">
+                                    <path class="playIcon" d="M8 5v14l11-7z" />
+                                </svg>
+                            </button>
+                            <p class="bubbleText">Maddie</p>
+                        </div>
+                    </section>
+                    <section class="slide imageSlide">
+                        <img src="./assets/landscape.webp"/>
+                        <p class="bubbleText">This is a description of whatever is in the image above. Please dont take this too seriously as I have just been rambling on and on and on. Huh? Did you say something? Welp, that's a right shame.</p>
+                    </section>
+                    <section class="slide imageSlide">
+                        <img src="./assets/portrait.jpg"/>
+                        <p class="bubbleText">This is a description of whatever is in the image above. Please dont take this too seriously as I have just been rambling on and on and on. Huh? Did you say something? Welp, that's a right shame.</p>
+                    </section>
+                    <section class="slide">2</section>
+                    <section class="slide">3</section>
+                </div>
             </div>
             <div id="controls">
-                <button id="leftBtn" class="controlBtn">
-                    <img src="./assets/arrow-left.svg"/>
+                <button id="leftBtn" class="controlBtn" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
                 </button>
                 <button id="rightBtn" class="controlBtn">
-                    <img src="./assets/arrow-right.svg"/>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18l6-6-6-6" />
+                    </svg>
                 </button>
             </div>
         </section>
