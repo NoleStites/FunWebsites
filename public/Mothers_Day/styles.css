@@ -8,6 +8,8 @@ body {
     width: 100vw;
     height: 100dvh;
     background-color: white;
+    background-image: url(./assets/castle.webp);
+    background-size: cover;
 }
 
 #content {
@@ -22,9 +24,6 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-
-    background-image: url(./assets/castle.webp);
-    background-size: cover;
 }
 
 #upperSection {
