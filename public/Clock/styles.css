@@ -16,7 +16,7 @@
 
 body {
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     background-color: var(--background-color);
 }
 
@@ -74,4 +74,10 @@ body {
     font-size: var(--digit-font-size);
     line-height: var(--digit-font-size);
     text-align: center;
+}
+
+@media (max-width: 480px) {
+    :root {
+        --digit-font-size: 100px;
+    }
 }
