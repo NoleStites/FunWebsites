@@ -8,8 +8,9 @@ body {
     width: 100vw;
     height: 100dvh;
     background-color: white;
-    background-image: url(./assets/castle.webp);
+    background-image: url(./assets/background.webp);
     background-size: cover;
+    background-position: center center;
 }
 
 #content {
