@@ -1,6 +1,6 @@
 :root {
     --boxSize: 500px;
-    --delayFactor: 1/8;
+    --delayFactor: 0.1;
     --animationSpeed: 1s;
     --scale: 4;
     --circleScale: calc(1/var(--scale));
@@ -16,6 +16,7 @@
 body {
     width: 100vw;
     height: 100dvh;
+    padding: 20px;
     /* background-color: black; */
     
     display: flex;
@@ -28,13 +29,83 @@ body {
 #inputBox {
     display: flex;
     flex-direction: column;
+    gap: 25px;
+    padding: 20px;
+    background: white; /* Matching the black theme */
+    color: black;
+    border: 2px solid black;
+    border-radius: 15%;
+    font-family: sans-serif;
+    max-width: 300px;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+}
+
+/* Base styling for the slider */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* The Track */
+input[type="range"]::-webkit-slider-runnable-track {
+    /* background: #333; Dark grey track */
+    background: linear-gradient(90deg, #ffb3ba, #ffdfba, #ffffba, #baffc9, #bae1ff, #e0baff);
+    height: 8px;
+    border: 1px solid #fff; /* White border for high contrast */
+}
+
+input[type="range"]::-moz-range-track {
+    /* background: #333; */
+    background: linear-gradient(90deg, #ffb3ba, #ffdfba, #ffffba, #baffc9, #bae1ff, #e0baff);
+    height: 8px;
+    border: 1px solid #fff;
+}
+
+/* The Thumb (The part you grab) */
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: -8px; /* Centers thumb on track */
+    background-color: #fff;
+    height: 24px;
+    width: 12px;
+    border: 1px solid #000;
+}
+
+input[type="range"]::-moz-range-thumb {
+    border: none;
+    border-radius: 0;
+    background-color: #fff;
+    height: 24px;
+    width: 12px;
+    border: 1px solid #000;
+}
+
+/* Hover & Active States */
+input[type="range"]:hover::-webkit-slider-thumb {
+    background-color: #ccc; /* Subtle feedback */
 }
 
 #box {
     position: relative;
-    width: var(--boxSize);
+    /* width: var(--boxSize); */
+    width: 100%;
+    max-width: 600px;
     aspect-ratio: 1/1;
     border-radius: 50%;
+    min-height: 0;
 
     display: flex;
     justify-content: center;

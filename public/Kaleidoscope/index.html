@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Color Slider</title>
+        <title>Kaleidoscope</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="./styles.css" rel="stylesheet" />
         <script src="./script.js" defer></script>
@@ -23,15 +23,15 @@
         <div id="inputBox">
             <label for="circleSizeInput">
                 Circle size:
-                <input id="circleSizeInput" type="range" min="1" max="10" step="1" onchange="changeCircleSize()">
+                <input id="circleSizeInput" type="range" min="1" max="10" step="1" value="4" onchange="changeCircleSize()">
             </label>
             <label for="animationSize">
                 Speed:
-                <input id="animationSize" type="range" min="0.2" max="5" step="0.1" onchange="changeSpeed()">
+                <input id="animationSize" type="range" min="0.2" max="5" step="0.1" value="1" onchange="changeSpeed()">
             </label>
             <label for="animationDelay">
                 Delay:
-                <input id="animationDelay" type="range" min="0" max="1" step="0.1" onchange="changeDelay()">
+                <input id="animationDelay" type="range" min="0" max="1" step="0.1" value="0.1" onchange="changeDelay()">
             </label>
         </div>
     </body>
