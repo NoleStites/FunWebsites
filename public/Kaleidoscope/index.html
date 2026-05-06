@@ -4,6 +4,7 @@
         <title>Kaleidoscope</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="./styles.css" rel="stylesheet" />
+        <link rel="icon" type="image/x-icon" href="./rainbowFav.svg">
         <script src="./script.js" defer></script>
     </head>
     <body>
@@ -23,6 +24,10 @@
             <label for="animationDelay">
                 Delay:
                 <input id="animationDelay" type="range" min="0" max="1" step="0.1" value="0.1" onchange="changeDelay()">
+            </label>
+            <label for="numCircles">
+                Number of Circles:
+                <input id="numCircles" type="number" min="1" max="100" step="1" value="20" onchange="changeNumCircles()">
             </label>
             <button id="darkLightMode">Dark Mode</button>
         </div> 

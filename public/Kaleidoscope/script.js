@@ -4,22 +4,30 @@
 var lightMode = true;
 var lightModeBtn = document.getElementById("darkLightMode");
 lightModeBtn.addEventListener("click", changePalette);
-document.documentElement.setAttribute('data-theme', "dark");
+document.documentElement.setAttribute('data-theme', "light");
 
+// Set default circle properties
+let numCircles = 20;
 const root = document.documentElement;
 const styles = getComputedStyle(root);
 let scale = styles.getPropertyValue('--scale').trim();
+document.getElementById("circleSizeInput").value = 11-parseInt(scale);
+document.getElementById("animationSpeed").value = 5.2 - 1;
+document.getElementById("animationDelay").value = 0.1;
+document.getElementById("numCircles").value = numCircles;
+
 let translateScale = 0.5*scale+1;
 let animationSpeed = 1;
 let delay = 0.1;
 let cosSinAngles = [];
 
-const numCircles = 20;
 generateCircles(numCircles);
 
 function generateCircles(num)
 {
     const circleBox = document.getElementById("innerBox");
+    circleBox.innerHTML = "";
+    cosSinAngles = [];
     for (let i = 0; i < num; i++) {
         let newCircle = document.createElement("div");
         newCircle.id = `color${i+1}`;
@@ -95,6 +103,17 @@ function changeDelay()
 {
     delay = document.getElementById("animationDelay").value;
     updateAnimations(numCircles);
+}
+
+function changeNumCircles()
+{
+    let input = document.getElementById("numCircles");
+    if ((parseInt(input.value) < parseInt(input.min)) || (parseInt(input.value) > parseInt(input.max))) {
+        input.value = numCircles;
+        return;
+    }
+    numCircles = input.value;
+    generateCircles(numCircles);
 }
 
 function changePalette() {
