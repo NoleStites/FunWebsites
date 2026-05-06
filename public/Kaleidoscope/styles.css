@@ -1,10 +1,7 @@
 :root {
     --boxSize: 500px;
-    --delayFactor: 0.1;
-    --animationSpeed: 1s;
     --scale: 4;
     --circleScale: calc(1/var(--scale));
-    --translateScale: calc(0.5*(var(--scale) + 1));
 }
 
 [data-theme="dark"] {
@@ -114,13 +111,9 @@ input[type="range"]:hover::-webkit-slider-thumb {
     border: 2px solid var(--theme-font);
     color: var(--theme-font)
 }
-/* #darkLightMode:hover {
-    background-color: rgb(237, 237, 237);
-} */
 
 #box {
     position: relative;
-    /* width: var(--boxSize); */
     width: 100%;
     max-width: 600px;
     aspect-ratio: 1/1;
@@ -142,7 +135,6 @@ input[type="range"]:hover::-webkit-slider-thumb {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* border: 1px solid black; */
 }
 
 #shadow {
@@ -151,7 +143,6 @@ input[type="range"]:hover::-webkit-slider-thumb {
     aspect-ratio: 1/1;
     border-radius: 50%;
     opacity: 1;
-    /* border: 1px solid black; */
     box-shadow: inset 0 0 30px 50px var(--theme-background);
 }
 
@@ -161,88 +152,4 @@ input[type="range"]:hover::-webkit-slider-thumb {
     aspect-ratio: 1/1;
     border-radius: 50%;
     opacity: 0.4;
-    animation-duration: var(--animationSpeed);
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-    animation-fill-mode: forwards;
-    animation-direction: alternate;
-}
-
-#color1 {
-    background-color: rgb(255, 0, 0);
-    animation-name: moveColor1;
-    animation-delay: calc(var(--delayFactor)*0s);
-}
-#color2 {
-    background-color: rgb(255, 127, 0);
-    animation-name: moveColor2;
-    animation-delay: calc(var(--delayFactor)*1s);
-}
-#color3 {
-    background-color: rgb(255, 255, 0);
-    animation-name: moveColor3;
-    animation-delay: calc(var(--delayFactor)*2s);
-}
-#color4 {
-    background-color: rgb(0, 255, 0);
-    animation-name: moveColor4;
-    animation-delay: calc(var(--delayFactor)*3s);
-}
-#color5 {
-    background-color: rgb(0, 255, 255);
-    animation-name: moveColor5;
-    animation-delay: calc(var(--delayFactor)*4s);
-}
-#color6 {
-    background-color: rgb(98, 98, 244);
-    animation-name: moveColor6;
-    animation-delay: calc(var(--delayFactor)*5s);
-}
-#color7 {
-    background-color: rgb(75, 0, 130);
-    animation-name: moveColor7;
-    animation-delay: calc(var(--delayFactor)*6s);
-}
-#color8 {
-    background-color: rgb(148, 0, 211);
-    animation-name: moveColor8;
-    animation-delay: calc(var(--delayFactor)*7s);
-}
-
-@keyframes moveColor1 {
-    from {transform: translate(0%);}
-    to {transform: translate(0%, calc(-100% * var(--translateScale)));}
-}
-@keyframes moveColor2 {
-    from {transform: translate(0%);}
-    to {
-        transform: translate(
-            calc(cos(45deg) * 100% * var(--translateScale)),
-            calc(cos(45deg) * -100% * var(--translateScale))
-        );
-    }
-}
-@keyframes moveColor3 {
-    from {transform: translate(0%);}
-    to {transform: translate(calc(100% * var(--translateScale)), 0%);}
-}
-@keyframes moveColor4 {
-    from {transform: translate(0%);}
-    to {transform: translate(calc(cos(45deg) * 100% * var(--translateScale)), calc(cos(45deg) * 100% * var(--translateScale)));}
-}
-@keyframes moveColor5 {
-    from {transform: translate(0%);}
-    to {transform: translate(0%, calc(100% * var(--translateScale)));}
-}
-@keyframes moveColor6 {
-    from {transform: translate(0%);}
-    to {transform: translate(calc(cos(45deg) * -100% * var(--translateScale)), calc(cos(45deg) * 100% * var(--translateScale)));}
-}
-@keyframes moveColor7 {
-    from {transform: translate(0%);}
-    to {transform: translate(calc(-100% * var(--translateScale)), 0%);}
-}
-@keyframes moveColor8 {
-    from {transform: translate(0%);}
-    to {transform: translate(calc(cos(45deg) * -100% * var(--translateScale)), calc(cos(45deg) * -100% * var(--translateScale)));}
 }

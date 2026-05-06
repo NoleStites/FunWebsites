@@ -1,26 +1,100 @@
+// TODO: 
+// move CSS animations to JS (refer to recent Gemini chat)
+
 var lightMode = true;
-document.documentElement.setAttribute('data-theme', "light");
 var lightModeBtn = document.getElementById("darkLightMode");
 lightModeBtn.addEventListener("click", changePalette);
+document.documentElement.setAttribute('data-theme', "dark");
+
+const root = document.documentElement;
+const styles = getComputedStyle(root);
+let scale = styles.getPropertyValue('--scale').trim();
+let translateScale = 0.5*scale+1;
+let animationSpeed = 1;
+let delay = 0.1;
+let cosSinAngles = [];
+
+const numCircles = 20;
+generateCircles(numCircles);
+
+function generateCircles(num)
+{
+    const circleBox = document.getElementById("innerBox");
+    for (let i = 0; i < num; i++) {
+        let newCircle = document.createElement("div");
+        newCircle.id = `color${i+1}`;
+        newCircle.classList.add("colorSquare");
+        newCircle.style.backgroundColor = `hsl(${(360/num)*i}, 100%, 50%)`;
+        
+        // 1. Calculate the angle for THIS specific circle
+        let angle = (2 * Math.PI / num) * i;
+
+        // 2. Get the X and Y unit vectors (values between -1 and 1)
+        let cos_angle = Math.cos(angle)*100;
+        let sin_angle = Math.sin(angle)*100;
+        cosSinAngles.push([cos_angle, sin_angle]);
+
+        circleBox.appendChild(newCircle);
+    }
+    updateAnimations(num);
+}
+
+function updateAnimations(num)
+{    
+    let circles = document.getElementsByClassName("colorSquare");
+    
+    // --- STEP 1: RESET EVERYTHING ---
+    for (let circle of circles) {
+        // This stops current animations and resets transforms to 0%
+        circle.getAnimations().forEach(anim => anim.cancel());
+    }
+
+    // --- STEP 2: APPLY NEW ANIMATIONS ---
+    let counter = 0;
+    for (let circle of circles)
+    {
+        let targetX = cosSinAngles[counter][0] * translateScale;
+        let targetY = cosSinAngles[counter][1] * translateScale;
+
+        circle.animate([
+                { transform: `translate(0%)` },
+                { transform: `translate(${targetX}%, ${targetY}%)` },
+        ],
+        {
+            duration: animationSpeed*1000,
+            iterations: Infinity,
+            easing: "linear",
+            fill: "forwards",
+            direction: "alternate",
+            delay: delay*counter*500
+        });
+
+        counter++;
+    }
+}
 
 function changeCircleSize()
 {
     let size = document.getElementById("circleSizeInput").value;
     size = 11 - size;
     document.documentElement.style.setProperty('--scale', `${size}`);
+    scale = size;
+    translateScale = 0.5*scale+1;
+    updateAnimations(numCircles);
 }
 
 function changeSpeed()
 {
     let speed = document.getElementById("animationSpeed").value;
     speed = 5.2 - speed;
-    document.documentElement.style.setProperty('--animationSpeed', `${speed}s`);
+    animationSpeed = speed;
+    updateAnimations(numCircles);
 }
 
 function changeDelay()
 {
-    let delay = document.getElementById("animationDelay").value;
-    document.documentElement.style.setProperty('--delayFactor', `${delay}`);
+    delay = document.getElementById("animationDelay").value;
+    updateAnimations(numCircles);
 }
 
 function changePalette() {
