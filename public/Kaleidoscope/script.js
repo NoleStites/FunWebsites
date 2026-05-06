@@ -1,27 +1,29 @@
 // TODO: 
 // move CSS animations to JS (refer to recent Gemini chat)
 
-var lightMode = true;
-var lightModeBtn = document.getElementById("darkLightMode");
-lightModeBtn.addEventListener("click", changePalette);
-document.documentElement.setAttribute('data-theme', "light");
+    var lightMode = true;
+    var lightModeBtn = document.getElementById("darkLightMode");
+    lightModeBtn.addEventListener("click", changePalette);
+    document.documentElement.setAttribute('data-theme', "light");
 
-// Set default circle properties
-let numCircles = 20;
-const root = document.documentElement;
-const styles = getComputedStyle(root);
-let scale = styles.getPropertyValue('--scale').trim();
-document.getElementById("circleSizeInput").value = 11-parseInt(scale);
-document.getElementById("animationSpeed").value = 5.2 - 1;
-document.getElementById("animationDelay").value = 0.1;
-document.getElementById("numCircles").value = numCircles;
+    // Set default circle properties
+    let numCircles = 20;
+    const root = document.documentElement;
+    const styles = getComputedStyle(root);
+    let scale = styles.getPropertyValue('--scale').trim();
+    document.getElementById("circleSizeInput").value = 11-parseInt(scale);
+    document.getElementById("animationSpeed").value = 5.2 - 1;
+    document.getElementById("animationDelay").value = 0.1;
+    document.getElementById("numCircles").value = numCircles;
 
-let translateScale = 0.5*scale+1;
-let animationSpeed = 1;
-let delay = 0.1;
-let cosSinAngles = [];
+    let translateScale = 0.5*scale+1;
+    let animationSpeed = 1;
+    let delay = 0.1;
+    let cosSinAngles = [];
 
-generateCircles(numCircles);
+window.onload = () => {
+    generateCircles(numCircles);
+};
 
 function generateCircles(num)
 {

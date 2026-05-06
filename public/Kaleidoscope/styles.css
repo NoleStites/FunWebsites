@@ -202,8 +202,9 @@ input[type="number"]:focus {
         gap: 30px;
     }
     #inputBox {
-        padding: 10px;
-        border-radius: 10px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        /* border-radius: 10px; */
         gap: 10px;
     }
     #box {
@@ -211,8 +212,10 @@ input[type="number"]:focus {
     }
     input[type="number"] {
         padding: 5px 12px;
+        border: 1px solid var(--theme-font);
     }
     #darkLightMode {
         padding: 10px;
+        border: 1px solid var(--theme-font);
     }
 }
