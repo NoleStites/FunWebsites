@@ -2,10 +2,19 @@
 <html>
     <head>
         <title>Nole's Website</title>
-        <link href="./styles.css" rel="stylesheet" />
+        <!-- <link href="./styles.css" rel="stylesheet" /> -->
+        <link href="./test.css" rel="stylesheet" />
+        <link href="./themes.css" rel="stylesheet" />
     </head>
     <body>
-        <div id="header_container"></div>
+        <div id="header_container">
+            Fun Websites
+            <button id="menu_toggle" class="menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
 
         <div id="content_container">
             <div id="toc_container">
@@ -92,7 +101,6 @@
                     </div>
                 </section>
             </div>
-
         </div>
 
 
@@ -116,6 +124,30 @@
         
         <!-- <a href="../Following_Eyes/index.html"><div class="project">Following Eyes</div></a> -->
         <!-- <a href="../Hourglass/index.html"><div class="project">Hourglass</div></a> -->
+    
+    <script>
+        const menuBtn = document.getElementById('menu_toggle');
+        const toc = document.getElementById('toc_container');
+        const tocLinks = document.querySelectorAll('#toc a');
+
+        // Toggle menu
+        menuBtn.addEventListener('click', () => {
+            toc.classList.toggle('mobile-open');
+        });
+
+        // Close menu when a link is clicked
+        tocLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                toc.classList.remove('mobile-open');
+            });
+        });
+
+        // Randomize the page's color theme
+        const themes = ["cyber_neon", "sunset_vibe", "emerald_dream", "cotton_candy", "midnight_aurora"];
+        const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+        document.documentElement.setAttribute('data-theme', randomTheme);
+    </script>
+    
     </body>
 </html>
 
