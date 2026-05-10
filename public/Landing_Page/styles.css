@@ -2,6 +2,7 @@
     margin: 0px;
     padding: 0px;
     font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
 }
 
 html {
@@ -11,48 +12,126 @@ html {
 body {
     position: relative;
     width: 100vw;
-    height: 100vh;
-}
-
-#page_heading {
-    background-color: black;
-    color: white;
-    text-align: center;
-    box-sizing: border-box;
-    width: 100%;
-    font-size: 3rem;
-    padding: 30px;
-}
-
-#project_box {
-    margin: 20px auto;
-    width: 75%;
-    height: fit-content;
+    height: 100dvh;
     display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 25px;
+    flex-direction: column;
 }
 
-.project {
-    width: 325px;
-    aspect-ratio: 2/1;
-    border-radius: 30px;
-    background-color: black ;
+#header_container {
+    width: 100%;
+    height: 150px;
+    background-color: cornflowerblue;
+    flex-shrink: 0;
+}
+
+#content_container {
+    /* max-height: 100%; */
+    position: relative;
+    display: flex;
+    /* flex: 1; */
+    flex-grow: 0;
+    overflow: scroll;
+}
+
+#toc_container {
+    /* position: fixed; */
+    /* width: 30%; */
+    max-height: 100%;
+    padding: 20px;
+    flex-grow: 0;
+    overflow-y: scroll;
+    background-color: rgba(128, 0, 128, 0.496);
+}
+
+#toc {
+    width: 100%;
+    /* height: 100%; */
+    display: flex;
+    /* justify-content: center; */
+    flex-direction: column;
+    gap: 180px;
+    background-color: rgb(62, 79, 73);
+}
+
+#toc li {
+    list-style: none;
+}
+
+#toc li a {
+    text-decoration: none;
+    color: white;
+    font-size: 20pt;
+}
+
+#site_sections_container {
+    position: relative;
+    background-color: palegoldenrod;
+    width: 70%;
+    flex: 1;
+    overflow-y: scroll;
+}
+
+.divider {
+    width: 50%;
+    flex-grow: 0;
+    height: 5px;
+    border-radius: 5px;
+    margin: 5px auto;
+    background-color: black;
+}
+
+/* SITE SECTION STYLES */
+.site_section {
+    width: 100%;
+    display: flex;
+    height: 500px;
+    background-color: aliceblue;
+}
+.site_section:target {
+}
+
+.site_content {
+    width: 100%;
+    background-color: yellowgreen;
+}
+
+.site_content h2, .site_content p {
+    display: block;
+    padding: 20px;
+}
+.site_content h2 {
+    background-color: lightblue;
+}
+.site_content p {
+    background-color: cadetblue;
+}
+
+.site_btn_container {
+    background-color: violet;
+    padding: 0px 20px;
+    flex: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: transform 0.2s ease;
-}
-.project:hover {
-    outline: 6px solid white;
-    outline-offset: 6px;
-    transform: scale(1.05);
 }
 
-a {
-    text-decoration: none;
-    font-size: 20pt;
-    text-align: center;
-    color: white;
+.controlBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, background 0.2s ease;
+    pointer-events: auto;
+    border: 2px solid rgba(255, 255, 255, 0.4);
 }
