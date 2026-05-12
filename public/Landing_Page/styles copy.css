@@ -245,7 +245,6 @@ body {
         transition: left 0.3s ease;
         background: var(--glass-dark);
         backdrop-filter: blur(25px);
-        -webkit-backdrop-filter: blur(25px);
     }
 
     #toc_container.mobile-open {
@@ -254,23 +253,18 @@ body {
 
     #site_sections_container {
         width: 100%;
-        padding: 20px; /* Reduces container padding so sections have room */
-        gap: 40px;
+        padding: 20px;
     }
 
     .site_section {
-        border-radius: 20px;
+        flex-direction: column;
+        min-height: auto;
     }
 
     .site_content h2 {
         font-size: 2rem;
     }
 
-    .site_content p {
-        font-size: 1.1rem;
-    }
-
-    /* Mobile Menu Burger Icon */
     .menu-btn {
         display: flex;
         flex-direction: column;
@@ -279,7 +273,6 @@ body {
         border: none;
         cursor: pointer;
         margin-left: auto;
-        padding: 10px;
     }
 
     .menu-btn span {
