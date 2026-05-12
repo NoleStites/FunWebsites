@@ -230,6 +230,12 @@ body {
     background-clip: padding-box;
 }
 
+@media (max-width: 950px) {
+    .site_content, .site_btn_container {
+        padding: 20px;
+    }
+}
+
 @media (max-width: 768px) {
     #content_container {
         flex-direction: column;
@@ -260,6 +266,11 @@ body {
 
     .site_section {
         border-radius: 20px;
+        min-height: 350px;
+    }
+
+    .site_content, .site_btn_container {
+        padding: 20px;
     }
 
     .site_content h2 {
