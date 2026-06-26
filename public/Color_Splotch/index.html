@@ -3,10 +3,46 @@
     <head>
         <title>Color Splotch</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="./splotch.svg">
         <link href="./styles.css" rel="stylesheet" />
         <script src="./script.js" defer></script>
     </head>
     <body class="flexCenter">
         <canvas id="splotchCanvas" width="10" height="10"></canvas>
+
+        <div id="controls">
+            <div>
+                <label for="resInputX">Resolution</label>
+                <input id="resInputX" type="number" min="1" max="100" value="50"> x
+                <input id="resInputY" type="number" min="1" max="100" value="50">
+            </div>
+            <div>
+                <label for="blendInput">Blend Factor</label>
+                <input  id="blendInput" type="range" min="1" step="1" max="30">
+            </div>
+            <div>
+                <label for="splotchCount">Splotches: </label>
+                <input id="splotchCount" type="number" min="1" max="10" value="2">
+                <button id="randomizeBtn">Randomize</button>
+            </div>
+        </div>
+
+        <div id="centerList">
+            <!-- <div class="centerBox">
+                <div class="colorPreview"></div>
+                <div class="point pill">
+                    <span>(</span><input id="pointX" type="number" min="0" max="5" value="0">,
+                    <input id="pointY" type="number" min="0" max="5" value="0">)
+                </div>
+                <div class="colorValue pill">
+                    <label for="red">red: </label>
+                    <input id="red" type="number" min="0" max="5" value="0">,
+                    <label for="red">green: </label>
+                    <input id="red" type="number" min="0" max="5" value="0">,
+                    <label for="red">blue: </label>
+                    <input id="red" type="number" min="0" max="5" value="0">
+                </div>
+            </div> -->
+        </div>
     </body>
 </html>

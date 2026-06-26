@@ -1,6 +1,7 @@
 // TODO
-// - Randomize weights based on various factors (Lana was suggesting points on one side of a center might have
-// a weaker weight than points on the other side)
+// - Add and remove custom color splotches
+// - Add an animate button that starts slowly changing the color center coords and rgb values 
+//   so that points slowly move around and change color
 
 // Import CSS vars
 const root = document.documentElement;
@@ -9,10 +10,11 @@ const styles = getComputedStyle(root);
 // let scaleY = parseInt(styles.getPropertyValue('--canvasSizeY'));
 
 // Global vars
-var resX = 25; // resolution of canvas (x-direction)
-var resY = 25; // resolution of canvas (y-direction)
+var resX = document.getElementById("resInputX").value; // resolution of canvas (x-direction)
+var resY = document.getElementById("resInputY").value; // resolution of canvas (y-direction)
 var maxDist; // maximum distance allowed in the canvas (used for weight calculations)
-var numOfSplotches = 3;
+var numOfSplotches = document.getElementById("splotchCount").value;
+var blendFactor = 1; // High: less blend; Low: more blend
 
 const splotchCanvas = document.getElementById("splotchCanvas");
 updateCanvasResolution(resX, resY);
@@ -30,39 +32,23 @@ class Splotch {
 }
 
 // Generate and draw random color splotches
-let splotches = generateRandomSplotches(numOfSplotches);
-
-// let red = new Splotch(0,0,255,0,0);
-// let green = new Splotch(resX/2,resY/2,0,255,0);
-// let blue = new Splotch(resX-1,resY-1,0,0,255);
-// let splotches = [red, green, blue];
-
-// let p1 = new Splotch(0,0,10,10,10);
-// let p2 = new Splotch(2,4,120,200,10);
-// let p3 = new Splotch(4,1,50,40,30);
-// let splotches = [p1,p2,p3];
-
-// let red1 = new Splotch(0,0,255,0,0);
-// let red2 = new Splotch(resX,0,255,0,0);
-// let red3 = new Splotch(0,resY,255,0,0);
-// let red4 = new Splotch(resX,resY,255,0,0);
-// let blue = new Splotch(resX/2,resY/2,0,0,255);
-// let splotches = [red1, red2, red3, red4, blue];
-
+var splotches = generateRandomSplotches(numOfSplotches);
 colorify(splotches);
 
 // Populates the canvas with color based on the given color splotches
 function colorify(splotches)
 {
+    let splotchList = Object.values(splotches);
+
     // Loop through all coordinates
     for (let x = 0; x < resX; x++) {
         for (let y = 0; y < resY; y++) {
             // Calculate weight of each splotch based on distance from current point to the splotch
             let weights = [];
             let weightSum = 0;
-            splotches.forEach(splotch => {
+            splotchList.forEach(splotch => {
                 let weight = round3(maxDist - distance(x, y, splotch.x, splotch.y));
-                // weight *= Math.random();
+                weight = round3(Math.pow(weight, blendFactor));
                 weights.push(weight);
                 weightSum += weight;
             });
@@ -71,16 +57,16 @@ function colorify(splotches)
             let colorValues = []; // [r,b,g]
             for (let i = 0; i < 3; i++) {
                 let sumOfTop = 0;
-                for (let j = 0; j < splotches.length; j++) {
+                for (let j = 0; j < splotchList.length; j++) {
                     switch (i) {
                         case 0:
-                            sumOfTop += weights[j] * splotches[j].r;
+                            sumOfTop += weights[j] * splotchList[j].r;
                             break;
                         case 1:
-                            sumOfTop += weights[j] * splotches[j].g;
+                            sumOfTop += weights[j] * splotchList[j].g;
                             break;
                         case 2:
-                            sumOfTop += weights[j] * splotches[j].b;
+                            sumOfTop += weights[j] * splotchList[j].b;
                             break;
                     }
                 }
@@ -105,22 +91,29 @@ function distance(x1, y1, x2, y2)
     return round3(Math.sqrt( Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2)) );
 }
 
-// Given a number of color splotches, will return a list of Splotches
+// Given a number of color splotches, will return a dictionary of Splotches
 // with a random color and position
+// Key (string): x,y
+// Value: Splotch object
 function generateRandomSplotches(count)
 {
     if (count < 0) {return [];} // Don't allow negative count
 
-    let splotches = [];
+    // Remove current colors from the HTML color list
+    clearColorCenterList();
+
+    let splotchesDict = {};
     for (let i = 0; i < count; i++) {
         let x = randIntBetween(0, resX);
         let y = randIntBetween(0, resY);
         let r = randIntBetween(0, 255);
         let g = randIntBetween(0, 255);
         let b = randIntBetween(0, 255);
-        splotches.push(new Splotch(x, y, r, g, b));
+        let newSplotch = new Splotch(x, y, r, g, b);
+        splotchesDict[`${x},${y}`] = newSplotch;
+        createHTMLColorCenter(newSplotch);
     }
-    return splotches;
+    return splotchesDict;
 }
 
 // Returns a random integer between two given values (exclusive)
@@ -144,3 +137,251 @@ function updateCanvasResolution(newResX, newResY)
     resX = newResX;
     resY = newResY;
 }
+
+// Clears all current points in the HTML color center list
+function clearColorCenterList()
+{
+    let centerList = document.getElementById("centerList");
+    centerList.innerHTML = "";
+}
+
+// Returns the RGB equivalent to a given hex color code
+function hexToRgb(hex) {
+  // Remove the hash if it exists
+  hex = hex.replace('#', '');
+
+  // Extract channels and parse to base-10 integers
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+
+  return { r, g, b };
+}
+
+// Create an HTML center (a point and an rgb) and append it to the point list
+function createHTMLColorCenter(splotch)
+{
+    let centerList = document.getElementById("centerList");
+
+    let div = document.createElement("div");
+    let span = document.createElement("span");
+    let input = document.createElement("input");
+    let label = document.createElement("label");
+
+    let center = div.cloneNode();
+    center.classList.add("centerBox");
+
+    // Make the color preview
+    let colorPreview = input.cloneNode();
+    colorPreview.type = "color";
+    colorPreview.id = `${splotch.x}-${splotch.y}-color`;
+    colorPreview.value = `rgb(${splotch.r},${splotch.g},${splotch.b})`;
+    colorPreview.addEventListener("input", (e) => {
+        let newRGB = hexToRgb(e.target.value);
+        splotch.r = newRGB.r;
+        splotch.g = newRGB.g;
+        splotch.b = newRGB.b;
+        colorify(splotches);
+    });
+
+    // Make the point
+    let point = div.cloneNode();
+    point.classList.add("point");
+    point.classList.add("pill");
+
+    let leftParen = span.cloneNode();
+    leftParen.innerText = '(';
+    let comma = span.cloneNode();
+    comma.innerText = ',';
+    let rightParen = span.cloneNode();
+    rightParen.innerText = ')';
+
+    let inputX = input.cloneNode();
+    inputX.id = `${splotch.x}-${splotch.y}-x`;
+    inputX.type = "number";
+    inputX.min = 0;
+    inputX.max = resX-1;
+    inputX.value = splotch.x;
+    inputX.addEventListener("input", (e) => {
+        splotch.x = e.target.value;
+        colorify(splotches);
+    });
+
+    let inputY = input.cloneNode();
+    inputY.id = `${splotch.x}-${splotch.y}-y`;
+    inputY.type = "number";
+    inputY.min = 0;
+    inputY.max = resY-1;
+    inputY.value = splotch.y;
+    inputY.addEventListener("input", (e) => {
+        splotch.y = e.target.value;
+        colorify(splotches);
+    });
+
+    // Put it all together
+    point.appendChild(leftParen);
+    point.appendChild(inputX);
+    point.appendChild(comma.cloneNode(true));
+    point.appendChild(inputY);
+    point.appendChild(rightParen);
+
+    center.appendChild(colorPreview);
+    center.appendChild(point);
+
+    centerList.appendChild(center);
+}
+
+// Create an HTML center (a point and an rgb) and append it to the point list
+// function createHTMLColorCenter(splotch)
+// {
+//     let centerList = document.getElementById("centerList");
+
+//     let div = document.createElement("div");
+//     let span = document.createElement("span");
+//     let input = document.createElement("input");
+//     let label = document.createElement("label");
+
+//     let center = div.cloneNode();
+//     center.classList.add("centerBox");
+
+//     // Make the color preview
+//     let colorPreview = div.cloneNode();
+//     colorPreview.id = `${splotch.x}-${splotch.y}-color`;
+//     colorPreview.classList.add("colorPreview");
+//     colorPreview.style.backgroundColor = `rgb(${splotch.r},${splotch.g},${splotch.b})`;
+
+//     // Make the point
+//     let point = div.cloneNode();
+//     point.classList.add("point");
+//     point.classList.add("pill");
+
+//     let leftParen = span.cloneNode();
+//     leftParen.innerText = '(';
+//     let comma = span.cloneNode();
+//     comma.innerText = ',';
+//     let rightParen = span.cloneNode();
+//     rightParen.innerText = ')';
+
+//     let inputX = input.cloneNode();
+//     inputX.id = `${splotch.x}-${splotch.y}-x`;
+//     inputX.type = "number";
+//     inputX.min = 0;
+//     inputX.max = resX-1;
+//     inputX.value = splotch.x;
+//     inputX.addEventListener("input", (e) => {
+//         splotch.x = e.target.value;
+//         colorify(splotches);
+//     });
+
+//     let inputY = input.cloneNode();
+//     inputY.id = `${splotch.x}-${splotch.y}-y`;
+//     inputY.type = "number";
+//     inputY.min = 0;
+//     inputY.max = resY-1;
+//     inputY.value = splotch.y;
+//     inputY.addEventListener("input", (e) => {
+//         splotch.y = e.target.value;
+//         colorify(splotches);
+//     });
+
+//     // Make the color
+//     let color = div.cloneNode();
+//     color.classList.add("colorValue");
+//     color.classList.add("pill");
+
+//     let rLabel = label.cloneNode();
+//     rLabel.htmlFor = `${splotch.x}-${splotch.y}-r`;
+//     rLabel.innerText = "red: ";
+//     let rInput = input.cloneNode();
+//     rInput.id = `${splotch.x}-${splotch.y}-r`;
+//     rInput.type = "number";
+//     rInput.min = 0;
+//     rInput.max = 255;
+//     rInput.value = splotch.r;
+//     rInput.addEventListener("input", (e) => {
+//         splotch.r = e.target.value;
+//         colorPreview.style.backgroundColor = `rgb(${splotch.r},${splotch.g},${splotch.b})`;
+//         colorify(splotches);
+//     });
+
+//     let gLabel = label.cloneNode();
+//     gLabel.htmlFor = `${splotch.x}-${splotch.y}-g`;
+//     gLabel.innerText = "green: ";
+//     let gInput = input.cloneNode();
+//     gInput.id = `${splotch.x}-${splotch.y}-g`;
+//     gInput.type = "number";
+//     gInput.min = 0;
+//     gInput.max = 255;
+//     gInput.value = splotch.g;
+//     gInput.addEventListener("input", (e) => {
+//         splotch.g = e.target.value;
+//         colorPreview.style.backgroundColor = `rgb(${splotch.r},${splotch.g},${splotch.b})`;
+//         colorify(splotches);
+//     });
+
+//     let bLabel = label.cloneNode();
+//     bLabel.htmlFor = `${splotch.x}-${splotch.y}-b`;
+//     bLabel.innerText = "blue: ";
+//     let bInput = input.cloneNode();
+//     bInput.id = `${splotch.x}-${splotch.y}-b`;
+//     bInput.type = "number";
+//     bInput.min = 0;
+//     bInput.max = 255;
+//     bInput.value = splotch.b;
+//     bInput.addEventListener("input", (e) => {
+//         splotch.b = e.target.value;
+//         colorPreview.style.backgroundColor = `rgb(${splotch.r},${splotch.g},${splotch.b})`;
+//         colorify(splotches);
+//     });
+
+//     // Put it all together
+//     point.appendChild(leftParen);
+//     point.appendChild(inputX);
+//     point.appendChild(comma.cloneNode(true));
+//     point.appendChild(inputY);
+//     point.appendChild(rightParen);
+
+//     color.appendChild(rLabel);
+//     color.appendChild(rInput);
+//     color.appendChild(comma.cloneNode(true));
+//     color.appendChild(gLabel);
+//     color.appendChild(gInput);
+//     color.appendChild(comma.cloneNode(true));
+//     color.appendChild(bLabel);
+//     color.appendChild(bInput);
+
+//     center.appendChild(colorPreview);
+//     center.appendChild(point);
+//     center.appendChild(color);
+
+//     centerList.appendChild(center);
+// }
+
+// Event Listeners
+document.getElementById("resInputX").addEventListener("change", (e) => {
+    let newResX = e.target.value;
+    updateCanvasResolution(newResX, resY);
+    splotches = generateRandomSplotches(numOfSplotches);
+    colorify(splotches);
+});
+
+document.getElementById("resInputY").addEventListener("change", (e) => {
+    let newResY = e.target.value;
+    updateCanvasResolution(resX, newResY);
+    splotches = generateRandomSplotches(numOfSplotches);
+    colorify(splotches);
+});
+
+document.getElementById("blendInput").addEventListener("change", (e) => {
+    blendFactor = e.target.value;
+    colorify(splotches);
+});
+
+document.getElementById("randomizeBtn").addEventListener("click", () => {
+    splotches = generateRandomSplotches(numOfSplotches);
+    colorify(splotches);
+});
+
+document.getElementById("splotchCount").addEventListener("input", (e) => {
+    numOfSplotches = e.target.value;
+});
