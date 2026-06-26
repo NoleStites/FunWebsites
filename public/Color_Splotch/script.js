@@ -12,11 +12,16 @@ const styles = getComputedStyle(root);
 // Global vars
 var resX = document.getElementById("resInputX").value; // resolution of canvas (x-direction)
 var resY = document.getElementById("resInputY").value; // resolution of canvas (y-direction)
+var pixelSizeX;
+var pixelSizeY;
 var maxDist; // maximum distance allowed in the canvas (used for weight calculations)
 var numOfSplotches = document.getElementById("splotchCount").value;
 var blendFactor = 1; // High: less blend; Low: more blend
+var isDragging = false;
 
 const splotchCanvas = document.getElementById("splotchCanvas");
+const canvasMask = document.getElementById("canvasMask");
+const mover = document.getElementById("mover");
 updateCanvasResolution(resX, resY);
 const ctx = splotchCanvas.getContext("2d");
 
@@ -129,6 +134,13 @@ function updateCanvasResolution(newResX, newResY)
     splotchCanvas.width = newResX;
     splotchCanvas.height = newResY;
     splotchCanvas.style.aspectRatio = `${newResX}/${newResY}`;
+    canvasMask.style.aspectRatio = `${newResX}/${newResY}`;
+
+    // Update mover size
+    pixelSizeX = splotchCanvas.offsetWidth / newResX;
+    pixelSizeY = splotchCanvas.offsetHeight / newResY;
+    mover.style.width = Math.round(pixelSizeX) + "px";
+    mover.style.height = Math.round(pixelSizeY) + "px";
 
     // Calculate max distance in canvas for future weight calculations using a^2 + b^2 = c^2
     maxDist = (Math.sqrt((resX*resX)+(resY*resY)));
@@ -170,6 +182,9 @@ function createHTMLColorCenter(splotch)
 
     let center = div.cloneNode();
     center.classList.add("centerBox");
+    center.addEventListener("click", () => {
+        showMover(splotch);
+    });
 
     // Make the color preview
     let colorPreview = input.cloneNode();
@@ -229,6 +244,20 @@ function createHTMLColorCenter(splotch)
     center.appendChild(point);
 
     centerList.appendChild(center);
+}
+
+// Hides the mover square
+function hideMove()
+{
+    mover.style.display = "none";
+}
+
+// Shows the mover square after moving it to the coords of the given splotch (color center coord)
+function showMover(splotch)
+{
+    mover.style.left = splotch.x * parseInt(mover.style.width) + "px";
+    mover.style.top = splotch.y * parseInt(mover.style.height) + "px";
+    mover.style.display = "block";
 }
 
 // Create an HTML center (a point and an rgb) and append it to the point list
@@ -384,4 +413,34 @@ document.getElementById("randomizeBtn").addEventListener("click", () => {
 
 document.getElementById("splotchCount").addEventListener("input", (e) => {
     numOfSplotches = e.target.value;
+});
+
+mover.addEventListener("mousedown", () => {
+    isDragging = true;
+});
+
+window.addEventListener("mouseup", () => {
+    isDragging = false;
+});
+
+let currCoord = "0,0";
+canvasMask.addEventListener("mousemove", (e) => {
+    if (!isDragging) {return;}
+    let rect = canvasMask.getBoundingClientRect();
+
+    // Calculate relative positions
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    let coordX = Math.floor(x / pixelSizeX) * pixelSizeX;
+    let coordY = Math.floor(y / pixelSizeY) * pixelSizeY;
+
+    if (`${coordX},${coordY}` == currCoord) {return;}
+
+    currCoord = `${coordX},${coordY}`;
+    mover.style.left = coordX + "px";
+    mover.style.top = coordY + "px";
+    
+    // console.log(`Relative to box: X=${x}, Y=${y}`);
+    console.log(coordX, coordY);
 });

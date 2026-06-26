@@ -20,13 +20,34 @@ body {
     align-items: center;
 }
 
-#splotchCanvas {
-    background-color: lightgray;
+#canvasBox {
+    outline: 1px red;
+    position: relative;
+}
+
+#canvasMask, #splotchCanvas {
     width: var(--canvasSizeX);
-    aspect-ratio: 1/1;
     max-width: var(--canvasSizeX);
     max-height: var(--canvasSizeX);
+    aspect-ratio: 1/1;
+}
+
+#canvasMask {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.345);
+}
+
+#splotchCanvas {
+    background-color: lightgray;
     image-rendering: pixelated;
+}
+
+#mover {
+    position: absolute;
+    width: 20px;
+    /* aspect-ratio: 1/1; */
+    border: 3px solid lime;
+    display: none;
 }
 
 #centerList {
@@ -37,6 +58,9 @@ body {
     padding: 20px;
     display: flex;
     gap: 10px;
+}
+.centerBox:hover {
+    background-color: rgb(242, 242, 242);
 }
 
 input[type="color"] {
