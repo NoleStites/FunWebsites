@@ -18,6 +18,7 @@ var maxDist; // maximum distance allowed in the canvas (used for weight calculat
 var numOfSplotches = document.getElementById("splotchCount").value;
 var blendFactor = 1; // High: less blend; Low: more blend
 var isDragging = false;
+var selectedSplotch;
 
 const splotchCanvas = document.getElementById("splotchCanvas");
 const canvasMask = document.getElementById("canvasMask");
@@ -183,6 +184,7 @@ function createHTMLColorCenter(splotch)
     let center = div.cloneNode();
     center.classList.add("centerBox");
     center.addEventListener("click", () => {
+        selectedSplotch = splotch;
         showMover(splotch);
     });
 
@@ -437,10 +439,15 @@ canvasMask.addEventListener("mousemove", (e) => {
 
     if (`${coordX},${coordY}` == currCoord) {return;}
 
+    // Update and redraw the color center
+    selectedSplotch.x = coordX / resX / 4;
+    selectedSplotch.y = coordY / resY / 4;
+    colorify(splotches);
+
+    // Move the mover
     currCoord = `${coordX},${coordY}`;
     mover.style.left = coordX + "px";
     mover.style.top = coordY + "px";
     
-    // console.log(`Relative to box: X=${x}, Y=${y}`);
-    console.log(coordX, coordY);
+    // console.log(coordX / resX / 4, coordY / resY / 4);
 });

@@ -46,7 +46,7 @@ body {
     position: absolute;
     width: 20px;
     /* aspect-ratio: 1/1; */
-    border: 3px solid lime;
+    border: 2px solid lime;
     display: none;
 }
 
