@@ -19,6 +19,7 @@ var numOfSplotches = document.getElementById("splotchCount").value;
 var blendFactor = 1; // High: less blend; Low: more blend
 var isDragging = false;
 var selectedSplotch;
+var selectedCoordDisplay;
 
 const splotchCanvas = document.getElementById("splotchCanvas");
 const canvasMask = document.getElementById("canvasMask");
@@ -183,8 +184,9 @@ function createHTMLColorCenter(splotch)
 
     let center = div.cloneNode();
     center.classList.add("centerBox");
-    center.addEventListener("click", () => {
+    center.addEventListener("click", (e) => {
         selectedSplotch = splotch;
+        selectedCoordDisplay = e.target;
         showMover(splotch);
     });
 
@@ -215,23 +217,27 @@ function createHTMLColorCenter(splotch)
 
     let inputX = input.cloneNode();
     inputX.id = `${splotch.x}-${splotch.y}-x`;
+    inputX.classList.add("inputX");
     inputX.type = "number";
     inputX.min = 0;
     inputX.max = resX-1;
     inputX.value = splotch.x;
     inputX.addEventListener("input", (e) => {
         splotch.x = e.target.value;
+        showMover(splotch);
         colorify(splotches);
     });
 
     let inputY = input.cloneNode();
     inputY.id = `${splotch.x}-${splotch.y}-y`;
+    inputY.classList.add("inputY");
     inputY.type = "number";
     inputY.min = 0;
     inputY.max = resY-1;
     inputY.value = splotch.y;
     inputY.addEventListener("input", (e) => {
         splotch.y = e.target.value;
+        showMover(splotch);
         colorify(splotches);
     });
 
@@ -440,8 +446,8 @@ canvasMask.addEventListener("mousemove", (e) => {
     if (`${coordX},${coordY}` == currCoord) {return;}
 
     // Update and redraw the color center
-    selectedSplotch.x = coordX / resX / 4;
-    selectedSplotch.y = coordY / resY / 4;
+    selectedSplotch.x = coordX / (rect.width / resX);
+    selectedSplotch.y = coordY / (rect.height / resY);
     colorify(splotches);
 
     // Move the mover
@@ -449,5 +455,7 @@ canvasMask.addEventListener("mousemove", (e) => {
     mover.style.left = coordX + "px";
     mover.style.top = coordY + "px";
     
-    // console.log(coordX / resX / 4, coordY / resY / 4);
+    // Update the written coords
+    selectedCoordDisplay.querySelector(".inputX").value = selectedSplotch.x;
+    selectedCoordDisplay.querySelector(".inputY").value = selectedSplotch.y;
 });
