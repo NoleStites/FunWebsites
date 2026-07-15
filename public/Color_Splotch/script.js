@@ -20,6 +20,8 @@ var blendFactor = 1; // High: less blend; Low: more blend
 var isDragging = false;
 var selectedSplotch;
 var selectedCoordDisplay;
+var centerIsSelected = false;
+var inputIsSelected = false;
 
 const splotchCanvas = document.getElementById("splotchCanvas");
 const canvasMask = document.getElementById("canvasMask");
@@ -172,6 +174,33 @@ function hexToRgb(hex) {
   return { r, g, b };
 }
 
+// Used when a checkbox is checked
+function toggleCheckmarks(clickedCheckmark)
+{
+    // if (inputIsSelected) {return;}
+
+    let checkmarks = document.getElementsByClassName("check");
+    let alreadyChecked = clickedCheckmark.checked;
+    hideMover();
+
+    if (centerIsSelected) {
+        for (let i = 0; i < checkmarks.length; i++) {
+            checkmarks[i].checked = false;
+        };
+        if (!alreadyChecked) {
+            clickedCheckmark.checked = true;
+            showMover(selectedSplotch);
+        } else {
+            centerIsSelected = false;
+        }
+    }
+    else {
+        centerIsSelected = true;
+        clickedCheckmark.checked = true;
+        showMover(selectedSplotch);
+    }
+}
+
 // Create an HTML center (a point and an rgb) and append it to the point list
 function createHTMLColorCenter(splotch)
 {
@@ -182,12 +211,18 @@ function createHTMLColorCenter(splotch)
     let input = document.createElement("input");
     let label = document.createElement("label");
 
+    // Make the checkbox
+    let checkbox = input.cloneNode();
+    checkbox.classList.add("check");
+    checkbox.id = `${splotch.x}-${splotch.y}-check`;
+    checkbox.type = "checkbox";
+
     let center = div.cloneNode();
     center.classList.add("centerBox");
     center.addEventListener("click", (e) => {
         selectedSplotch = splotch;
-        selectedCoordDisplay = e.target;
-        showMover(splotch);
+        selectedCoordDisplay = center;
+        toggleCheckmarks(checkbox);
     });
 
     // Make the color preview
@@ -201,6 +236,7 @@ function createHTMLColorCenter(splotch)
         splotch.g = newRGB.g;
         splotch.b = newRGB.b;
         colorify(splotches);
+        console.log(inputIsSelected);
     });
 
     // Make the point
@@ -224,7 +260,6 @@ function createHTMLColorCenter(splotch)
     inputX.value = splotch.x;
     inputX.addEventListener("input", (e) => {
         splotch.x = e.target.value;
-        showMover(splotch);
         colorify(splotches);
     });
 
@@ -237,7 +272,6 @@ function createHTMLColorCenter(splotch)
     inputY.value = splotch.y;
     inputY.addEventListener("input", (e) => {
         splotch.y = e.target.value;
-        showMover(splotch);
         colorify(splotches);
     });
 
@@ -248,16 +282,11 @@ function createHTMLColorCenter(splotch)
     point.appendChild(inputY);
     point.appendChild(rightParen);
 
+    center.appendChild(checkbox);
     center.appendChild(colorPreview);
     center.appendChild(point);
 
     centerList.appendChild(center);
-}
-
-// Hides the mover square
-function hideMove()
-{
-    mover.style.display = "none";
 }
 
 // Shows the mover square after moving it to the coords of the given splotch (color center coord)
@@ -266,6 +295,12 @@ function showMover(splotch)
     mover.style.left = splotch.x * parseInt(mover.style.width) + "px";
     mover.style.top = splotch.y * parseInt(mover.style.height) + "px";
     mover.style.display = "block";
+}
+
+// Hides the mover
+function hideMover()
+{
+    mover.style.display = "none";
 }
 
 // Create an HTML center (a point and an rgb) and append it to the point list
@@ -456,6 +491,6 @@ canvasMask.addEventListener("mousemove", (e) => {
     mover.style.top = coordY + "px";
     
     // Update the written coords
-    selectedCoordDisplay.querySelector(".inputX").value = selectedSplotch.x;
-    selectedCoordDisplay.querySelector(".inputY").value = selectedSplotch.y;
+    selectedCoordDisplay.children[2].children[1].value = selectedSplotch.x;
+    selectedCoordDisplay.children[2].children[3].value = selectedSplotch.y;
 });

@@ -1,5 +1,6 @@
 :root {
     --canvasSizeX: 400px;
+    /* --canvasSizeX: 80%; */
 }
 
 * {
@@ -21,7 +22,9 @@ body {
 }
 
 #canvasBox {
-    outline: 1px red;
+    /* width: 80%; */
+    /* aspect-ratio: 1/1; */
+    outline: 1px blue;
     position: relative;
 }
 
