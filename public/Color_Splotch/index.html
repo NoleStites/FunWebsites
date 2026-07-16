@@ -8,30 +8,54 @@
         <script src="./script.js" defer></script>
     </head>
     <body class="flexCenter">
-        <div id="canvasBox">
-            <div id="canvasMask">
-                <div id="mover"></div>
+        <main id="appContainer">
+            <div id="canvasBox">
+                <div id="canvasMask">
+                    <div id="mover"></div>
+                </div>
+                <canvas id="splotchCanvas" width="10" height="10"></canvas>
             </div>
-            <canvas id="splotchCanvas" width="10" height="10"></canvas>
-        </div>
 
-        <div id="controls">
-            <div>
-                <label for="resInputX">Resolution</label>
-                <input id="resInputX" type="number" min="1" max="100" value="50"> x
-                <input id="resInputY" type="number" min="1" max="100" value="50">
-            </div>
-            <div>
-                <label for="blendInput">Blend Factor</label>
-                <input  id="blendInput" type="range" min="1" step="1" max="30">
-            </div>
-            <div>
-                <label for="splotchCount">Splotches: </label>
-                <input id="splotchCount" type="number" min="1" max="10" value="2">
-                <button id="randomizeBtn">Randomize</button>
-            </div>
-        </div>
+            <div id="controls">
+                <div class="controlRow">
+                    <label for="resInputX">Resolution</label>
+                    <div class="inputGroup">
+                        <input id="resInputX" type="number" min="2" max="100" value="50">
+                        <span class="separator">×</span>
+                        <input id="resInputY" type="number" min="2" max="100" value="50">
+                    </div>
+                </div>
+                
+                <div class="controlRow">
+                    <label>Blend</label>
+                    <div class="sliderGroup">
+                        <span class="sliderLabel">More</span>
+                        <input id="blendInput" type="range" min="1" step="1" max="30">
+                        <span class="sliderLabel">Less</span>
+                    </div>
+                </div>
 
-        <div id="centerList"></div>
+                <div class="controlRow">
+                    <label for="splotchCount">Colors</label>
+                    <div class="inputGroup">
+                        <input id="splotchCount" type="number" min="1" max="10" value="2">
+                        <button id="randomizeBtn">Randomize</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="centerList">
+                <!-- <div class="centerBox">
+                    <input type="color">
+                    <div class="point pill">
+                        <span>(</span>
+                        <input type="number" class="inputX">
+                        <span class="comma">,</span>
+                        <input type="number" class="inputY">
+                        <span>)</span>
+                    </div>
+                </div> -->
+            </div>
+        </main>
     </body>
 </html>

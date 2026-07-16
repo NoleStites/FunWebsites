@@ -6,17 +6,22 @@
 // Import CSS vars
 const root = document.documentElement;
 const styles = getComputedStyle(root);
-// let scaleX = parseInt(styles.getPropertyValue('--canvasSizeX'));
-// let scaleY = parseInt(styles.getPropertyValue('--canvasSizeY'));
+
+// Default configurations
+var resX = 30;
+var resY = 30;
+var blendFactor = 5; // High: less blend; Low: more blend
+var numOfSplotches = 3;
+
+document.getElementById("resInputX").value = resX;
+document.getElementById("resInputY").value = resY;
+document.getElementById("blendInput").value = blendFactor;
+document.getElementById("splotchCount").value = numOfSplotches;
 
 // Global vars
-var resX = document.getElementById("resInputX").value; // resolution of canvas (x-direction)
-var resY = document.getElementById("resInputY").value; // resolution of canvas (y-direction)
 var pixelSizeX;
 var pixelSizeY;
 var maxDist; // maximum distance allowed in the canvas (used for weight calculations)
-var numOfSplotches = document.getElementById("splotchCount").value;
-var blendFactor = 1; // High: less blend; Low: more blend
 var isDragging = false;
 var selectedSplotch;
 var selectedCoordDisplay;
@@ -174,11 +179,19 @@ function hexToRgb(hex) {
   return { r, g, b };
 }
 
+function disableCheckmarks()
+{
+    let checkmarks = document.getElementsByClassName("check");
+    hideMover();
+    for (let i = 0; i < checkmarks.length; i++) {
+        checkmarks[i].checked = false;
+    };
+    centerIsSelected = false;
+}
+
 // Used when a checkbox is checked
 function toggleCheckmarks(clickedCheckmark)
 {
-    // if (inputIsSelected) {return;}
-
     let checkmarks = document.getElementsByClassName("check");
     let alreadyChecked = clickedCheckmark.checked;
     hideMover();
@@ -236,7 +249,6 @@ function createHTMLColorCenter(splotch)
         splotch.g = newRGB.g;
         splotch.b = newRGB.b;
         colorify(splotches);
-        console.log(inputIsSelected);
     });
 
     // Make the point
@@ -259,6 +271,8 @@ function createHTMLColorCenter(splotch)
     inputX.max = resX-1;
     inputX.value = splotch.x;
     inputX.addEventListener("input", (e) => {
+        if (e.target.value > resX-1) {e.target.value = resX-1;}
+        if (e.target.value < 0) {e.target.value = 0;}
         splotch.x = e.target.value;
         colorify(splotches);
     });
@@ -303,137 +317,15 @@ function hideMover()
     mover.style.display = "none";
 }
 
-// Create an HTML center (a point and an rgb) and append it to the point list
-// function createHTMLColorCenter(splotch)
-// {
-//     let centerList = document.getElementById("centerList");
-
-//     let div = document.createElement("div");
-//     let span = document.createElement("span");
-//     let input = document.createElement("input");
-//     let label = document.createElement("label");
-
-//     let center = div.cloneNode();
-//     center.classList.add("centerBox");
-
-//     // Make the color preview
-//     let colorPreview = div.cloneNode();
-//     colorPreview.id = `${splotch.x}-${splotch.y}-color`;
-//     colorPreview.classList.add("colorPreview");
-//     colorPreview.style.backgroundColor = `rgb(${splotch.r},${splotch.g},${splotch.b})`;
-
-//     // Make the point
-//     let point = div.cloneNode();
-//     point.classList.add("point");
-//     point.classList.add("pill");
-
-//     let leftParen = span.cloneNode();
-//     leftParen.innerText = '(';
-//     let comma = span.cloneNode();
-//     comma.innerText = ',';
-//     let rightParen = span.cloneNode();
-//     rightParen.innerText = ')';
-
-//     let inputX = input.cloneNode();
-//     inputX.id = `${splotch.x}-${splotch.y}-x`;
-//     inputX.type = "number";
-//     inputX.min = 0;
-//     inputX.max = resX-1;
-//     inputX.value = splotch.x;
-//     inputX.addEventListener("input", (e) => {
-//         splotch.x = e.target.value;
-//         colorify(splotches);
-//     });
-
-//     let inputY = input.cloneNode();
-//     inputY.id = `${splotch.x}-${splotch.y}-y`;
-//     inputY.type = "number";
-//     inputY.min = 0;
-//     inputY.max = resY-1;
-//     inputY.value = splotch.y;
-//     inputY.addEventListener("input", (e) => {
-//         splotch.y = e.target.value;
-//         colorify(splotches);
-//     });
-
-//     // Make the color
-//     let color = div.cloneNode();
-//     color.classList.add("colorValue");
-//     color.classList.add("pill");
-
-//     let rLabel = label.cloneNode();
-//     rLabel.htmlFor = `${splotch.x}-${splotch.y}-r`;
-//     rLabel.innerText = "red: ";
-//     let rInput = input.cloneNode();
-//     rInput.id = `${splotch.x}-${splotch.y}-r`;
-//     rInput.type = "number";
-//     rInput.min = 0;
-//     rInput.max = 255;
-//     rInput.value = splotch.r;
-//     rInput.addEventListener("input", (e) => {
-//         splotch.r = e.target.value;
-//         colorPreview.style.backgroundColor = `rgb(${splotch.r},${splotch.g},${splotch.b})`;
-//         colorify(splotches);
-//     });
-
-//     let gLabel = label.cloneNode();
-//     gLabel.htmlFor = `${splotch.x}-${splotch.y}-g`;
-//     gLabel.innerText = "green: ";
-//     let gInput = input.cloneNode();
-//     gInput.id = `${splotch.x}-${splotch.y}-g`;
-//     gInput.type = "number";
-//     gInput.min = 0;
-//     gInput.max = 255;
-//     gInput.value = splotch.g;
-//     gInput.addEventListener("input", (e) => {
-//         splotch.g = e.target.value;
-//         colorPreview.style.backgroundColor = `rgb(${splotch.r},${splotch.g},${splotch.b})`;
-//         colorify(splotches);
-//     });
-
-//     let bLabel = label.cloneNode();
-//     bLabel.htmlFor = `${splotch.x}-${splotch.y}-b`;
-//     bLabel.innerText = "blue: ";
-//     let bInput = input.cloneNode();
-//     bInput.id = `${splotch.x}-${splotch.y}-b`;
-//     bInput.type = "number";
-//     bInput.min = 0;
-//     bInput.max = 255;
-//     bInput.value = splotch.b;
-//     bInput.addEventListener("input", (e) => {
-//         splotch.b = e.target.value;
-//         colorPreview.style.backgroundColor = `rgb(${splotch.r},${splotch.g},${splotch.b})`;
-//         colorify(splotches);
-//     });
-
-//     // Put it all together
-//     point.appendChild(leftParen);
-//     point.appendChild(inputX);
-//     point.appendChild(comma.cloneNode(true));
-//     point.appendChild(inputY);
-//     point.appendChild(rightParen);
-
-//     color.appendChild(rLabel);
-//     color.appendChild(rInput);
-//     color.appendChild(comma.cloneNode(true));
-//     color.appendChild(gLabel);
-//     color.appendChild(gInput);
-//     color.appendChild(comma.cloneNode(true));
-//     color.appendChild(bLabel);
-//     color.appendChild(bInput);
-
-//     center.appendChild(colorPreview);
-//     center.appendChild(point);
-//     center.appendChild(color);
-
-//     centerList.appendChild(center);
-// }
-
 // Event Listeners
 document.getElementById("resInputX").addEventListener("change", (e) => {
     let newResX = e.target.value;
+    if (newResX > 100) {e.target.value = e.target.max;}
+    if (newResX < 2) {e.target.value = e.target.min;}
+
     updateCanvasResolution(newResX, resY);
     splotches = generateRandomSplotches(numOfSplotches);
+    disableCheckmarks();
     colorify(splotches);
 });
 
@@ -441,6 +333,7 @@ document.getElementById("resInputY").addEventListener("change", (e) => {
     let newResY = e.target.value;
     updateCanvasResolution(resX, newResY);
     splotches = generateRandomSplotches(numOfSplotches);
+    disableCheckmarks();
     colorify(splotches);
 });
 
@@ -451,6 +344,7 @@ document.getElementById("blendInput").addEventListener("change", (e) => {
 
 document.getElementById("randomizeBtn").addEventListener("click", () => {
     splotches = generateRandomSplotches(numOfSplotches);
+    disableCheckmarks();
     colorify(splotches);
 });
 
@@ -491,6 +385,6 @@ canvasMask.addEventListener("mousemove", (e) => {
     mover.style.top = coordY + "px";
     
     // Update the written coords
-    selectedCoordDisplay.children[2].children[1].value = selectedSplotch.x;
-    selectedCoordDisplay.children[2].children[3].value = selectedSplotch.y;
+    selectedCoordDisplay.children[2].children[1].value = Math.round(selectedSplotch.x);
+    selectedCoordDisplay.children[2].children[3].value = Math.round(selectedSplotch.y);
 });
