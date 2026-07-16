@@ -23,6 +23,10 @@ body {
     font-family: var(--font-stack);
     font-size: 13px;
     letter-spacing: -0.01em;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
 }
 
 .flexCenter {
@@ -49,6 +53,9 @@ body {
     border-radius: 8px;
     overflow: hidden;
     background-color: #fbfbfb;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 #canvasMask, #splotchCanvas {

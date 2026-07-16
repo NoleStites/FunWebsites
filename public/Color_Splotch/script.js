@@ -356,35 +356,52 @@ mover.addEventListener("mousedown", () => {
     isDragging = true;
 });
 
+mover.addEventListener("touchstart", (e) => {
+    isDragging = true;
+    if (e.cancelable) e.preventDefault();
+}, { passive: false });
+
 window.addEventListener("mouseup", () => {
     isDragging = false;
 });
 
+window.addEventListener("touchend", () => {
+    isDragging = false;
+});
+
 let currCoord = "0,0";
-canvasMask.addEventListener("mousemove", (e) => {
+
+function handleMove(clientX, clientY) {
     if (!isDragging) {return;}
     let rect = canvasMask.getBoundingClientRect();
 
-    // Calculate relative positions
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
 
     let coordX = Math.floor(x / pixelSizeX) * pixelSizeX;
     let coordY = Math.floor(y / pixelSizeY) * pixelSizeY;
 
     if (`${coordX},${coordY}` == currCoord) {return;}
 
-    // Update and redraw the color center
     selectedSplotch.x = coordX / (rect.width / resX);
     selectedSplotch.y = coordY / (rect.height / resY);
     colorify(splotches);
 
-    // Move the mover
     currCoord = `${coordX},${coordY}`;
     mover.style.left = coordX + "px";
     mover.style.top = coordY + "px";
     
-    // Update the written coords
     selectedCoordDisplay.children[2].children[1].value = Math.round(selectedSplotch.x);
     selectedCoordDisplay.children[2].children[3].value = Math.round(selectedSplotch.y);
+}
+
+canvasMask.addEventListener("mousemove", (e) => {
+    handleMove(e.clientX, e.clientY);
 });
+
+canvasMask.addEventListener("touchmove", (e) => {
+    if (e.touches.length > 0) {
+        handleMove(e.touches[0].clientX, e.touches[0].clientY);
+    }
+    if (e.cancelable) e.preventDefault();
+}, { passive: false });
