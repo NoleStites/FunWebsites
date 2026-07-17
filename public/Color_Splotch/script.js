@@ -271,9 +271,10 @@ function createHTMLColorCenter(splotch)
     inputX.max = resX-1;
     inputX.value = splotch.x;
     inputX.addEventListener("input", (e) => {
-        if (e.target.value > resX-1) {e.target.value = resX-1;}
-        if (e.target.value < 0) {e.target.value = 0;}
-        splotch.x = e.target.value;
+        let value = parseInt(e.target.value);
+        if (value > resX-1) {e.target.value = resX-1;}
+        if (value < 0) {e.target.value = 0;}
+        splotch.x = value;
         colorify(splotches);
     });
 
@@ -285,7 +286,10 @@ function createHTMLColorCenter(splotch)
     inputY.max = resY-1;
     inputY.value = splotch.y;
     inputY.addEventListener("input", (e) => {
-        splotch.y = e.target.value;
+        let value = parseInt(e.target.value);
+        if (value > resY-1) {e.target.value = resY-1;}
+        if (value < 0) {e.target.value = 0;}
+        splotch.y = value;
         colorify(splotches);
     });
 
@@ -306,8 +310,8 @@ function createHTMLColorCenter(splotch)
 // Shows the mover square after moving it to the coords of the given splotch (color center coord)
 function showMover(splotch)
 {
-    mover.style.left = splotch.x * parseInt(mover.style.width) + "px";
-    mover.style.top = splotch.y * parseInt(mover.style.height) + "px";
+    mover.style.left = (splotch.x * pixelSizeX) + "px";
+    mover.style.top = (splotch.y * pixelSizeY) + "px";
     mover.style.display = "block";
 }
 
@@ -369,30 +373,34 @@ window.addEventListener("touchend", () => {
     isDragging = false;
 });
 
-let currCoord = "0,0";
+// let currCoord = "0,0";
+let currCoordX = 0;
+let currCoordY = 0;
 
 function handleMove(clientX, clientY) {
     if (!isDragging) {return;}
     let rect = canvasMask.getBoundingClientRect();
 
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
 
-    let coordX = Math.floor(x / pixelSizeX) * pixelSizeX;
-    let coordY = Math.floor(y / pixelSizeY) * pixelSizeY;
+    let gridX = Math.trunc(mouseX/pixelSizeX);
+    let gridY = Math.trunc(mouseY/pixelSizeY);
+    
+    if ((gridX == currCoordX) && (gridY == currCoordY)) {return;}
 
-    if (`${coordX},${coordY}` == currCoord) {return;}
+    currCoordX = gridX;
+    currCoordY = gridY;
+    selectedSplotch.x = gridX;
+    selectedSplotch.y = gridY;
 
-    selectedSplotch.x = coordX / (rect.width / resX);
-    selectedSplotch.y = coordY / (rect.height / resY);
     colorify(splotches);
 
-    currCoord = `${coordX},${coordY}`;
-    mover.style.left = coordX + "px";
-    mover.style.top = coordY + "px";
-    
-    selectedCoordDisplay.children[2].children[1].value = Math.round(selectedSplotch.x);
-    selectedCoordDisplay.children[2].children[3].value = Math.round(selectedSplotch.y);
+    mover.style.left = (gridX * pixelSizeX) + "px";
+    mover.style.top = (gridY * pixelSizeY) + "px";
+
+    selectedCoordDisplay.children[2].children[1].value = gridX;
+    selectedCoordDisplay.children[2].children[3].value = gridY;
 }
 
 canvasMask.addEventListener("mousemove", (e) => {
