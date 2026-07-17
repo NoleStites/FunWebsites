@@ -18,6 +18,8 @@
 body {
     width: 100vw;
     height: 100dvh;
+    width: 100svw;
+    height: 100svh;
     background-color: var(--bg-color);
     color: var(--text-primary);
     font-family: var(--font-stack);
