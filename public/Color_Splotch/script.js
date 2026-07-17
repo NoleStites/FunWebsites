@@ -310,8 +310,11 @@ function createHTMLColorCenter(splotch)
 // Shows the mover square after moving it to the coords of the given splotch (color center coord)
 function showMover(splotch)
 {
-    mover.style.left = (splotch.x * pixelSizeX) + "px";
-    mover.style.top = (splotch.y * pixelSizeY) + "px";
+    let rect = canvasMask.getBoundingClientRect();
+    // mover.style.left = (splotch.x * pixelSizeX) + "px";
+    // mover.style.top = (splotch.y * pixelSizeY) + "px";
+    mover.style.left = ((splotch.x / resX) * rect.width) + "px";
+    mover.style.top = ((splotch.y / resY) * rect.height) + "px";
     mover.style.display = "block";
 }
 
@@ -381,12 +384,17 @@ function handleMove(clientX, clientY) {
     if (!isDragging) {return;}
     let rect = canvasMask.getBoundingClientRect();
 
-    const mouseX = clientX - rect.left;
-    const mouseY = clientY - rect.top;
+    // const mouseX = clientX - rect.left;
+    // const mouseY = clientY - rect.top;
+    const pctX = (clientX - rect.left) / rect.width;
+    const pctY = (clientY - rect.top) / rect.height;
 
-    let gridX = Math.trunc(mouseX/pixelSizeX);
-    let gridY = Math.trunc(mouseY/pixelSizeY);
+    // let gridX = Math.trunc(mouseX/pixelSizeX);
+    // let gridY = Math.trunc(mouseY/pixelSizeY);
+    let gridX = Math.trunc(pctX * resX);
+    let gridY = Math.trunc(pctY * resY);
     
+    if ((gridX > resX-1) || (gridX < 0) || (gridY > resY-1) || (gridY < 0)) {return;}
     if ((gridX == currCoordX) && (gridY == currCoordY)) {return;}
 
     currCoordX = gridX;
@@ -396,8 +404,10 @@ function handleMove(clientX, clientY) {
 
     colorify(splotches);
 
-    mover.style.left = (gridX * pixelSizeX) + "px";
-    mover.style.top = (gridY * pixelSizeY) + "px";
+    // mover.style.left = (gridX * pixelSizeX) + "px";
+    // mover.style.top = (gridY * pixelSizeY) + "px";
+    mover.style.left = ((gridX / resX) * rect.width) + "px";
+    mover.style.top = ((gridY / resY) * rect.height) + "px";
 
     selectedCoordDisplay.children[2].children[1].value = gridX;
     selectedCoordDisplay.children[2].children[3].value = gridY;
