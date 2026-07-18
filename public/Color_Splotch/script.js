@@ -2,6 +2,7 @@
 // - Add and remove custom color splotches
 // - Add an animate button that starts slowly changing the color center coords and rgb values 
 //   so that points slowly move around and change color
+// - Gets vertically cut off on google mobile
 
 // Import CSS vars
 const root = document.documentElement;
@@ -311,8 +312,6 @@ function createHTMLColorCenter(splotch)
 function showMover(splotch)
 {
     let rect = canvasMask.getBoundingClientRect();
-    // mover.style.left = (splotch.x * pixelSizeX) + "px";
-    // mover.style.top = (splotch.y * pixelSizeY) + "px";
     mover.style.left = ((splotch.x / resX) * rect.width) + "px";
     mover.style.top = ((splotch.y / resY) * rect.height) + "px";
     mover.style.display = "block";
@@ -384,13 +383,9 @@ function handleMove(clientX, clientY) {
     if (!isDragging) {return;}
     let rect = canvasMask.getBoundingClientRect();
 
-    // const mouseX = clientX - rect.left;
-    // const mouseY = clientY - rect.top;
     const pctX = (clientX - rect.left) / rect.width;
     const pctY = (clientY - rect.top) / rect.height;
 
-    // let gridX = Math.trunc(mouseX/pixelSizeX);
-    // let gridY = Math.trunc(mouseY/pixelSizeY);
     let gridX = Math.trunc(pctX * resX);
     let gridY = Math.trunc(pctY * resY);
     
@@ -404,8 +399,6 @@ function handleMove(clientX, clientY) {
 
     colorify(splotches);
 
-    // mover.style.left = (gridX * pixelSizeX) + "px";
-    // mover.style.top = (gridY * pixelSizeY) + "px";
     mover.style.left = ((gridX / resX) * rect.width) + "px";
     mover.style.top = ((gridY / resY) * rect.height) + "px";
 
